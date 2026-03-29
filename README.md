@@ -17,7 +17,7 @@ Install these first:
 
 - `npx skills add outcomeeng/spec-tree`
 
-  - outcomeeng/spec-tree (for /testing and /reviewing-tests)
+  - outcomeeng/spec-tree (for /testing and /auditing-tests)
 ## Skills (8)
 
 | Skill | Description |
