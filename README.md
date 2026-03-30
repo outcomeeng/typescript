@@ -23,11 +23,11 @@ Install these first:
 | Skill | Description |
 | ----- | ----------- |
 | `architecting-typescript` | writing ADRs or making TypeScript architecture decisions |
+| `auditing-typescript` | auditing TypeScript code or validating implementations |
+| `auditing-typescript-architecture` | auditing ADRs or architecture decisions |
+| `auditing-typescript-tests` | auditing TypeScript tests for evidentiary value and spec compliance |
 | `coding-typescript` | writing or fixing TypeScript implementation code |
 | `implementing-typescript-files` | given file paths to implement or applying TDD to specific files |
-| `reviewing-typescript` | reviewing TypeScript code or validating implementations |
-| `reviewing-typescript-architecture` | reviewing ADRs or architecture decisions |
-| `reviewing-typescript-tests` | reviewing TypeScript tests for evidentiary value and spec compliance |
 | `standardizing-typescript` | TypeScript code standards enforced across all skills |
 | `testing-typescript` | writing TypeScript tests or fixing test failures |
 

@@ -1,8 +1,8 @@
 ---
-name: reviewing-typescript
+name: auditing-typescript
 description: >-
-  ALWAYS invoke this skill when reviewing TypeScript code or validating implementations.
-  NEVER review code without this skill.
+  ALWAYS invoke this skill when auditing TypeScript code or validating implementations.
+  NEVER audit code without this skill.
 allowed-tools: Read, Bash, Glob, Grep, Write, Edit
 ---
 
