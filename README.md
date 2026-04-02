@@ -18,19 +18,18 @@ Install these first:
 - `npx skills add outcomeeng/spec-tree`
 
   - outcomeeng/spec-tree (for /testing and /auditing-tests)
-## Skills (9)
+## Skills (8)
 
 | Skill | Description |
 | ----- | ----------- |
-| `architecting-typescript` | writing ADRs or making TypeScript architecture decisions |
-| `auditing-typescript` | auditing TypeScript code or validating implementations |
-| `auditing-typescript-architecture` | auditing ADRs or architecture decisions |
-| `auditing-typescript-tests` | auditing TypeScript tests for evidentiary value and spec compliance |
-| `coding-typescript` | writing or fixing TypeScript implementation code |
-| `implementing-typescript-files` | given file paths to implement or applying TDD to specific files |
+| `architecting-typescript` | writing ADRs for TypeScript |
+| `auditing-typescript` | auditing code for TypeScript or after writing code |
+| `auditing-typescript-architecture` | auditing ADRs for TypeScript or after writing an ADR |
+| `auditing-typescript-tests` | auditing tests for TypeScript or after writing tests |
+| `coding-typescript` | writing or fixing implementation code for TypeScript |
 | `standardizing-typescript` | TypeScript code standards enforced across all skills |
 | `standardizing-typescript-architecture` | TypeScript ADR conventions enforced across architect and auditor skills |
-| `testing-typescript` | writing TypeScript tests or fixing test failures |
+| `testing-typescript` | writing or fixing tests for TypeScript |
 
 ## License
 

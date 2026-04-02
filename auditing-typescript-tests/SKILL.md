@@ -1,8 +1,8 @@
 ---
 name: auditing-typescript-tests
 description: >-
-  ALWAYS invoke this skill when auditing TypeScript tests for evidentiary value and spec compliance.
-  NEVER audit tests without this skill.
+  ALWAYS invoke this skill when auditing tests for TypeScript or after writing tests.
+  NEVER use auditing-typescript for test code.
 ---
 
 <objective>
@@ -377,7 +377,7 @@ How to avoid: Essential principles — no code quality checks. Check the four ev
 | **Alignment**      | Parser/serializer without `fc.assert` roundtrip             | Alignment      |
 | **Alignment**      | Property assertion tested with only examples                | Alignment      |
 | **Alignment**      | Test exercises different behavior than assertion describes  | Alignment      |
-| **Coverage**       | Zero delta on assertion-relevant source files               | Coverage       |
+| **Coverage**       | Zero delta with baseline < 100% on assertion-relevant files | Coverage       |
 
 </rejection_triggers>
 
