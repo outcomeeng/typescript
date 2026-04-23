@@ -1,7 +1,7 @@
 ---
 name: auditing-typescript-tests
 description: >-
-  ALWAYS invoke this skill when auditing tests for TypeScript or after writing tests.
+  ALWAYS invoke this skill when auditing tests for TypeScript or after writing or editing tests.
   NEVER use auditing-typescript for test code.
 ---
 
@@ -11,23 +11,24 @@ TypeScript-specific test audit. Extends `/auditing-tests` with TypeScript supple
 
 Read `/auditing-tests` first — it defines the 4-property evidence model and ordered workflow. This skill adds only what is TypeScript-specific.
 
+Before running the audit, load `/standardizing-typescript`, then `/standardizing-typescript-tests`, then check `spx/local/typescript.md` and `spx/local/typescript-tests.md` at the repository root in that order.
+
 </objective>
 
 <quick_start>
 
-**PREREQUISITE**: Read `/auditing-tests` and its evidence model before auditing.
+**PREREQUISITES**:
 
-1. Run the `/auditing-tests` workflow: load context → map assertions → audit coupling → falsifiability → alignment → coverage → verdict
-2. At each property step, apply the TypeScript supplement below
-3. First property failure = REJECT (skip remaining properties for that assertion)
+1. Read `/standardizing-typescript`
+2. Read `/standardizing-typescript-tests`
+3. Check `spx/local/typescript.md` and `spx/local/typescript-tests.md` at the repository root in that order
+4. Read `/auditing-tests` and its evidence model before auditing
 
-**TypeScript filename conventions** for assertion-to-test mapping:
+5. Run the `/auditing-tests` workflow: load context → map assertions → audit coupling → falsifiability → alignment → coverage → verdict
+6. At each property step, apply the TypeScript supplement below
+7. First property failure = REJECT (skip remaining properties for that assertion)
 
-| Level | Filename suffix        | Example                       |
-| ----- | ---------------------- | ----------------------------- |
-| 1     | `.unit.test.ts`        | `uart-tx.unit.test.ts`        |
-| 2     | `.integration.test.ts` | `uart-tx.integration.test.ts` |
-| 3     | `.e2e.test.ts`         | `uart-tx.e2e.test.ts`         |
+Use the filename conventions from `/standardizing-typescript-tests` for assertion-to-test mapping.
 
 </quick_start>
 
@@ -37,7 +38,7 @@ Follow the four principles from `/auditing-tests`: **COUPLING FIRST**, **RUN COV
 
 **NO CODE QUALITY CHECKS.**
 
-Type safety (`as any`, `@ts-ignore`), return types, test organization, import style — these are linting concerns enforced by `/standardizing-typescript`, tsc strict mode, and ESLint. The auditor evaluates evidence quality only. A test with perfect TypeScript quality and zero evidentiary value must be REJECTED. A test with sloppy types but genuine evidence of spec fulfillment is not rejected by this audit.
+Type safety (`as any`, `@ts-ignore`), filename conventions, test-data organization, and import style are standards concerns enforced by `/standardizing-typescript`, `/standardizing-typescript-tests`, tsc strict mode, and ESLint. The auditor evaluates evidence quality only. A test with perfect TypeScript quality and zero evidentiary value must be REJECTED. A test with sloppy types but genuine evidence of spec fulfillment is not rejected by this audit.
 
 </essential_principles>
 
@@ -174,6 +175,8 @@ fc.assert(
 );
 ```
 
+For filename conventions, source-owned values, inline diagnostics, fixtures, and harness placement, defer to `/standardizing-typescript-tests`. Treat those as standards issues unless they break coupling, falsifiability, alignment, or coverage directly.
+
 </supplement>
 
 <supplement property="coverage">
@@ -218,7 +221,7 @@ Assertion mapping:
 Assertion: MUST: Given a config file with nested sections, when parsed,
            then all section values are accessible by dotted path
 Type: Scenario
-Test: tests/config-parser.unit.test.ts ✓ exists
+Test: tests/config-parser.scenario.l1.test.ts ✓ exists
 ```
 
 Coupling:
@@ -272,7 +275,7 @@ Auditing `spx/32-api.enabler/54-auth.outcome/`
 ```text
 Assertion: MUST: Given valid credentials, when authenticating,
            then a session token is returned from the database
-Test: tests/auth.integration.test.ts ✓ exists
+Test: tests/auth.scenario.l2.test.ts ✓ exists
 ```
 
 Coupling:
@@ -306,7 +309,7 @@ Auditing `spx/15-theme.enabler/22-contrast.outcome/`
 
 ```text
 Assertion: MUST: All theme colors meet WCAG AA contrast ratio (4.5:1)
-Test: tests/contrast.unit.test.ts ✓ exists
+Test: tests/contrast.compliance.l1.test.ts ✓ exists
 ```
 
 Coupling:

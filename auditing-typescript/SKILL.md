@@ -14,11 +14,13 @@ This skill is read-only. It produces verdicts, not commits or fixes.
 
 **Test evidence quality is audited by `/auditing-typescript-tests`.** This skill audits implementation code, not test code. If test files are in scope, delegate to `/auditing-typescript-tests`.
 
+**Before reviewing code, read `/standardizing-typescript`.** After that, check for `spx/local/typescript.md` at the repository root. Read that file if it exists and apply it as the repo-local specialization.
+
 </objective>
 
 <quick_start>
 
-1. Read `/testing` for methodology + `/testing-typescript` for TypeScript patterns
+1. Read `/standardizing-typescript`, then `spx/local/typescript.md` if present, then `/testing` for methodology + `/testing-typescript` for TypeScript patterns
 2. Load project config: `CLAUDE.md`, `tsconfig.json`, `package.json` (Phase 0)
 3. Run automated gates -- project validation command (Phase 1, blocking)
 4. Run tests -- verify all pass (Phase 2, blocking)
@@ -62,7 +64,7 @@ Execute phases IN ORDER. Do not skip.
 
 Run the project's validation command. Catches everything linters handle: type safety, naming, magic numbers, unused imports, security rules.
 
-If the project lacks its own linter configs, use the reference configs in `${SKILL_DIR}/rules/`:
+If the project lacks its own linter configs, use the reference configs in `${CLAUDE_SKILL_DIR}/rules/`:
 
 | File                   | Purpose                                      |
 | ---------------------- | -------------------------------------------- |
@@ -141,7 +143,7 @@ Evaluate import structure using the same vocabulary as `/auditing-typescript-tes
 
 For stable locations (`lib/`, `tests/helpers/`, `shared/`), path aliases are mandatory regardless of depth.
 
-See `${SKILL_DIR}/references/false-positive-handling.md` for application context when evaluating security and linter suppression comments.
+See `${CLAUDE_SKILL_DIR}/references/false-positive-handling.md` for application context when evaluating security and linter suppression comments.
 
 **Phase 4: ADR/PDR Compliance**
 
@@ -150,7 +152,7 @@ Find applicable ADRs/PDRs in the spec hierarchy (`*.adr.md`, `*.pdr.md`). Verify
 | Decision Record Constraint           | Violation Example                   | Verdict  |
 | ------------------------------------ | ----------------------------------- | -------- |
 | "Use dependency injection" (ADR)     | Direct imports of external services | REJECTED |
-| "Level 1 tests for logic" (ADR)      | Unit tests hitting network          | REJECTED |
+| "`l1` tests for logic" (ADR)         | `l1` tests hitting network          | REJECTED |
 | "No class components" (ADR)          | React class component added         | REJECTED |
 | "Lifecycle is Draft→Published" (PDR) | Added hidden `Archived` state       | REJECTED |
 
@@ -235,7 +237,7 @@ These are real failures from past audits. Study them to avoid repeating them.
 </what_to_avoid>
 
 <example_review>
-Read `${SKILL_DIR}/references/example-review.md` for complete APPROVED and REJECTED examples showing all concern types.
+Read `${CLAUDE_SKILL_DIR}/references/example-review.md` for complete APPROVED and REJECTED examples showing all concern types.
 
 </example_review>
 

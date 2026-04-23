@@ -10,6 +10,10 @@ allowed-tools: Read, Bash, Glob, Grep, Write, Edit
 > **PREREQUISITE: Run through the `/testing` router first.**
 >
 > This skill provides TypeScript-specific implementations for decisions made there. Do NOT skip the router—it determines WHAT to test and at WHAT level. This skill shows HOW to implement that decision in TypeScript.
+>
+> Before writing or revising tests, load `/standardizing-typescript`, then `/standardizing-typescript-tests`, then check for `spx/local/typescript.md` and `spx/local/typescript-tests.md` at the repository root in that order.
+>
+> `/standardizing-typescript-tests` is the canonical source for filename conventions, property-based requirements, dependency-injection patterns, harness ownership, and test-data policy. This skill focuses on implementing those decisions in concrete test code.
 
 **Note on Analysis sections:** When reading node specs, the Analysis section documents what the spec author examined. It provides context but is not binding — implementation may diverge as understanding deepens. Use it as a starting point, not a contract.
 
@@ -21,9 +25,9 @@ After running through the `/testing` router, use this mapping:
 
 | Router Decision                                 | TypeScript Implementation                        |
 | ----------------------------------------------- | ------------------------------------------------ |
-| **Stage 2 → Level 1**                           | Vitest + temp dirs + type-safe DI                |
-| **Stage 2 → Level 2**                           | Vitest + harness classes + Docker                |
-| **Stage 2 → Level 3**                           | Vitest (CLI/API) or Playwright (browser)         |
+| **Stage 2 → `l1`**                              | Vitest + temp dirs + type-safe DI                |
+| **Stage 2 → `l2`**                              | Vitest + harness classes + Docker                |
+| **Stage 2 → `l3`**                              | Vitest (CLI/API) or Playwright (browser)         |
 | **Stage 3A** (Pure computation)                 | Pure functions with explicit types               |
 | **Stage 3B** (Extract pure part)                | Factor into typed pure functions + thin wrappers |
 | **Stage 5 Exception 1** (Failure modes)         | Interface + stub class returning errors          |
@@ -36,19 +40,19 @@ After running through the `/testing` router, use this mapping:
 
 ## TypeScript Tooling by Level
 
-| Level            | Infrastructure                                  | Speed | Framework  |
-| ---------------- | ----------------------------------------------- | ----- | ---------- |
-| 1: Unit          | Node.js stdlib + temp dirs + standard dev tools | <50ms | Vitest     |
-| 2: Integration   | Docker containers + project-specific binaries   | <1s   | Vitest     |
-| 3: E2E (CLI/API) | Network services + external APIs                | <30s  | Vitest     |
-| 3: E2E (Browser) | Chrome + real user flows                        | <30s  | Playwright |
+| Level     | Infrastructure                                  | Speed | Framework  |
+| --------- | ----------------------------------------------- | ----- | ---------- |
+| `l1`      | Node.js stdlib + temp dirs + standard dev tools | <50ms | Vitest     |
+| `l2`      | Docker containers + project-specific binaries   | <1s   | Vitest     |
+| `l3`      | Network services + external APIs                | <30s  | Vitest     |
+| `l2`/`l3` | Chrome + real user flows                        | <30s  | Playwright |
 
-**Standard dev tools** (Level 1): git, node, npm, curl—available in CI without setup.
-**Project-specific tools** (Level 2): Docker, Hugo, Caddy, PostgreSQL—require installation.
+**Standard dev tools** (`l1`): git, node, npm, curl—available in CI without setup.
+**Project-specific tools** (`l2`): Docker, Hugo, Caddy, PostgreSQL—require installation.
 
 ---
 
-## Level 1: Pure Computation (Stage 3A)
+## `l1`: Pure Computation (Stage 3A)
 
 When the router determines your code is pure computation, test it directly with full type safety.
 
@@ -139,7 +143,7 @@ describe("analyzeResults", () => {
 
 ### Temporary Directories
 
-Temp dirs are NOT external dependencies—use them freely at Level 1.
+Temp dirs are NOT external dependencies—use them freely at `l1`.
 
 ```typescript
 import { mkdtemp, rm, writeFile } from "fs/promises";
@@ -178,7 +182,7 @@ base_url: http://localhost:1313
 
 ---
 
-## Level 1: Extracted Logic (Stage 3B)
+## `l1`: Extracted Logic (Stage 3B)
 
 When the router says "extract the pure part," factor your code with explicit types.
 
@@ -189,7 +193,7 @@ class OrderProcessor {
   constructor(private repository: OrderRepository) {}
 
   async process(order: Order): Promise<void> {
-    // Validation (pure) mixed with persistence (integration)
+    // Validation (`l1`) mixed with persistence (`l2`, depends on database)
     if (!order.items.length) {
       throw new ValidationError("Empty order");
     }
@@ -204,7 +208,7 @@ class OrderProcessor {
 ### After: Extracted
 
 ```typescript
-// Pure computation - test at Level 1, no doubles
+// Pure computation - test at `l1`, no doubles
 type ValidationResult = { ok: true } | { ok: false; error: string };
 
 function validateOrder(order: Order): ValidationResult {
@@ -217,7 +221,7 @@ function validateOrder(order: Order): ValidationResult {
   return { ok: true };
 }
 
-// Thin wrapper - test at Level 2 with real database
+// Thin wrapper - test at `l2` with real database
 class OrderProcessor {
   constructor(private repository: OrderRepository) {}
 
@@ -234,7 +238,7 @@ class OrderProcessor {
 Test them separately:
 
 ```typescript
-// Level 1: Test validation logic exhaustively
+// l1: Test validation logic exhaustively
 describe("validateOrder", () => {
   it("rejects empty order", () => {
     const result = validateOrder({ items: [], total: 0 });
@@ -252,14 +256,14 @@ describe("validateOrder", () => {
   });
 });
 
-// Level 2: Test persistence with real database (see Level 2 section)
+// l2: Test persistence with real database (see `l2` section)
 ```
 
 ---
 
-## Level 1: Dependency Injection Pattern
+## `l1`: Dependency Injection Pattern
 
-When code has dependencies but you've determined Level 1 is appropriate (via router Stage 3), use type-safe DI.
+When code has dependencies but you've determined `l1` is appropriate (via router Stage 3), use type-safe DI.
 
 ```typescript
 // Define typed dependencies
@@ -618,9 +622,9 @@ describe("UserRepository", () => {
 
 ---
 
-## Level 2: Integration Patterns
+## `l2` Patterns
 
-When the router determines Level 2 is appropriate, use real dependencies via typed harnesses.
+When the router determines `l2` is appropriate, use real dependencies via typed harnesses.
 
 ### Harness Pattern
 
@@ -675,7 +679,7 @@ async function createHugoHarness(fixturePath?: string): Promise<HugoHarness> {
 ```typescript
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-describe("Hugo Integration", () => {
+describe("Hugo build", () => {
   let harness: HugoHarness;
 
   beforeAll(async () => {
@@ -760,15 +764,15 @@ async function createPostgresHarness(): Promise<PostgresHarness> {
 
 ---
 
-## Level 3: E2E Patterns
+## `l3` Patterns
 
-When the router determines Level 3 is required (real credentials, external services).
+When the router determines `l3` is required (real credentials, external services).
 
 ### Credential Management
 
 ```typescript
 /**
- * Level 3 tests require these environment variables:
+ * l3 tests require these environment variables:
  *
  * Required:
  *   LHCI_SERVER_URL    - LHCI server URL
@@ -814,7 +818,7 @@ function requireCredentials(): Credentials {
 ```typescript
 import { describe, expect, it } from "vitest";
 
-describe("LHCI E2E", () => {
+describe("LHCI", () => {
   const credentials = loadCredentials();
 
   it.skipIf(!credentials)("uploads audit results", async () => {
@@ -831,10 +835,10 @@ describe("LHCI E2E", () => {
 });
 ```
 
-### Playwright for Browser E2E
+### Playwright for Browser
 
 ```typescript
-// spx/.../tests/checkout.e2e.spec.ts (Playwright)
+// spx/.../tests/checkout.scenario.l2.playwright.test.ts
 import { expect, test } from "@playwright/test";
 
 test.describe("Checkout Flow", () => {
@@ -863,7 +867,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     include: ["spx/**/*.test.ts"],
-    exclude: ["**/*.spec.ts"], // Playwright handles .spec.ts
+    exclude: ["**/*.playwright.test.ts"],
     testTimeout: 30000,
     hookTimeout: 30000,
   },
@@ -876,7 +880,7 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./spx",
-  testMatch: "**/*.e2e.spec.ts",
+  testMatch: "**/*.playwright.test.ts",
   fullyParallel: true,
   use: {
     baseURL: process.env.TEST_BASE_URL || "http://localhost:3000",
@@ -888,7 +892,7 @@ export default defineConfig({
 
 ## Test Organization (Outcome Engineering Framework)
 
-Tests are co-located with specs in `spx/`. Level is indicated by suffix:
+Tests are co-located with specs in `spx/`. Filenames encode subject, evidence, level, and optional runner:
 
 ```
 spx/
@@ -896,17 +900,17 @@ spx/
     └── {NN}-{slug}.outcome/
         ├── {slug}.outcome.md             # Node spec
         └── tests/
-            ├── {name}.unit.test.ts       # Level 1 (Vitest)
-            ├── {name}.integration.test.ts # Level 2 (Vitest)
-            ├── {name}.e2e.test.ts        # Level 3, non-browser (Vitest)
-            └── {name}.e2e.spec.ts        # Level 3, browser (Playwright)
+            ├── {name}.mapping.l1.test.ts
+            ├── {name}.scenario.l2.test.ts
+            ├── {name}.conformance.l3.test.ts
+            └── {name}.scenario.l2.playwright.test.ts
 ```
 
 Run by runner:
 
 ```bash
-vitest spx/                    # Runs *.test.ts
-npx playwright test spx/       # Runs *.spec.ts
+vitest spx/                    # Runs default-runner *.test.ts files
+npx playwright test spx/       # Runs *.playwright.test.ts files
 ```
 
 ### Shared Test Infrastructure
@@ -933,7 +937,7 @@ import { createHugoHarness } from "@testing/harnesses/hugo";
 
 ## Quick Reference
 
-| Aspect       | Level 1                  | Level 2            | Level 3              |
+| Aspect       | `l1`                     | `l2`               | `l3`                 |
 | ------------ | ------------------------ | ------------------ | -------------------- |
 | Dependencies | DI with typed interfaces | Real via harness   | Real via credentials |
 | Data         | Type-safe factories      | Fixtures + harness | Test accounts        |
@@ -1017,3 +1021,27 @@ it("rejects invalid config with descriptive error", () => {
   expect(result.error).toContain("url");
 });
 ```
+
+### Playwright `{ request }` fixture does not inherit browser-context cookies
+
+Playwright's `{ request }` fixture uses its own test-scoped `APIRequestContext` that does NOT share cookies with the browser `BrowserContext`. Cookies set via `context.addCookies([...])` (e.g. by a `beforeEach` helper that encrypts a flag-override cookie) do not reach `{ request }`.
+
+```typescript
+// ❌ WRONG: request fixture — no cookie inheritance
+test.beforeEach(async ({ context }) => {
+  await context.addCookies([{ name: "override", value: ENCRYPTED, path: "/", domain: "localhost" }]);
+});
+
+test("API returns flag-gated payload", async ({ request }) => {
+  const response = await request.get("/api/data"); // cookie absent
+  expect(await response.json()).toContain(FLAGGED_ITEM); // fails
+});
+
+// ✅ RIGHT: context.request — shares cookies with browser context
+test("API returns flag-gated payload", async ({ context }) => {
+  const response = await context.request.get("/api/data"); // cookie present
+  expect(await response.json()).toContain(FLAGGED_ITEM);
+});
+```
+
+`page.request` also shares cookies with the browser context and works when a test already needs a page.

@@ -8,6 +8,8 @@ allowed-tools: Read, Write, Glob, Grep
 <essential_principles>
 **Read `/standardizing-typescript-architecture` before writing any ADR.** It defines the canonical ADR sections, how testability appears in Compliance rules, and what does NOT belong in an ADR.
 
+After reading `/standardizing-typescript-architecture`, check for `spx/local/typescript-architecture.md` at the repository root. Read that file if it exists and apply it as the repo-local specialization.
+
 - ADRs follow the authoritative template: Purpose, Context, Decision, Rationale, Trade-offs, Invariants, Compliance
 - Testability constraints go in the Compliance section as MUST/NEVER rules -- not in a separate Testing Strategy section
 - No `any` without explicit justification in ADR
@@ -57,7 +59,7 @@ Read these files to understand project structure and workflow:
 
 - `spx/CLAUDE.md` - Project navigation, work item status, BSP dependencies
 
-For testing methodology, invoke the `/testing-typescript` skill
+For TypeScript test standards and methodology, invoke `/standardizing-typescript-tests` and `/testing-typescript`
 
 **3. Existing Decisions**
 
@@ -103,11 +105,12 @@ Execute these phases IN ORDER.
 2. Read project context:
    - `spx/CLAUDE.md` - Project structure, navigation, work item management
 3. Read `/standardizing-typescript-architecture` for canonical ADR conventions
-4. Invoke `/testing-typescript` to understand testing methodology
-5. Read existing ADRs for consistency:
+4. Invoke `/standardizing-typescript-tests` for canonical test standards
+5. Invoke `/testing-typescript` for TypeScript testing methodology and patterns
+6. Read existing ADRs for consistency:
    - `spx/{NN}-{slug}.adr.md` - Product-level ADRs
    - ADRs interleaved within enabler/outcome nodes
-6. Read `/authoring` skill for ADR template
+7. Read `/authoring` skill for ADR template
 
 **Phase 1: Identify Decisions Needed**
 
