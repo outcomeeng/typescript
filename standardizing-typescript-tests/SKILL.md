@@ -1,6 +1,6 @@
 ---
 name: standardizing-typescript-tests
-user-invocable: false
+disable-model-invocation: true
 description: >-
   TypeScript testing standards enforced across all skills. Loaded by other skills, not invoked directly.
 allowed-tools: Read
@@ -114,6 +114,77 @@ After `/testing` chooses the evidence and level, implement it with these TypeScr
 | Stage 5 exception 7: contract probes       | Stub validated against the contract schema                 |
 
 </router_mapping>
+
+<l1_patterns>
+Pure computation and filesystem tests at `l1` use direct function calls, typed factories, and Node.js temp dirs. Read `${CLAUDE_SKILL_DIR}/references/l1-patterns.md` for full examples of each pattern.
+</l1_patterns>
+
+<exception_implementations>
+When `/testing` routes to Stage 5, implement the exception in TypeScript using the pattern from `<router_mapping>`. Read `${CLAUDE_SKILL_DIR}/references/exception-implementations.md` for full TypeScript examples of exceptions 1–4 and 6.
+
+Exception 5 (combinatorial cost: configurable fake with real-shaped behavior) is listed in `<router_mapping>` but does not yet have a TypeScript example.
+</exception_implementations>
+
+<l2_patterns>
+Use typed harness factories when tests require real infrastructure (Docker, browsers, project binaries). Verify the binary is available at harness construction time, not inside each test. Throw with an installation hint so the developer knows immediately what is missing. Read `${CLAUDE_SKILL_DIR}/references/l2-patterns.md` for the full harness factory pattern.
+</l2_patterns>
+
+<l3_patterns>
+`l3` tests require real credentials or remote services.
+
+**Credential policy: always fail loudly. Skipping is forbidden.**
+
+`it.skip`, `it.skipIf`, `test.skip`, and any other skip mechanism are forbidden for credentialed tests. A skipped test silently passes the suite while hiding missing evidence. When credentials are absent, the test must throw with a clear diagnostic.
+
+```typescript
+/**
+ * l3 tests require these environment variables:
+ *
+ *   LHCI_SERVER_URL  - LHCI server base URL
+ *   LHCI_TOKEN       - build token
+ *
+ * Where to find: 1Password "Engineering/Test Credentials"
+ * Setup: cp .env.test.example .env.test and fill in values
+ */
+
+type Credentials = {
+  serverUrl: string;
+  token: string;
+};
+
+function requireCredentials(): Credentials {
+  const serverUrl = process.env.LHCI_SERVER_URL;
+  const token = process.env.LHCI_TOKEN;
+
+  if (!serverUrl || !token) {
+    throw new Error(
+      "Missing LHCI_SERVER_URL or LHCI_TOKEN. See test file header for setup instructions.",
+    );
+  }
+
+  return { serverUrl, token };
+}
+
+describe("LHCI", () => {
+  let credentials: Credentials;
+
+  beforeAll(() => {
+    credentials = requireCredentials();
+  });
+
+  it("uploads audit results to server", async () => {
+    const result = await uploadAuditResults({
+      serverUrl: credentials.serverUrl,
+      token: credentials.token,
+      results: testResults,
+    });
+
+    expect(result.success).toBe(true);
+  });
+});
+```
+
+</l3_patterns>
 
 <dependency_injection>
 Tests verify behavior through real code paths. Avoid framework-level replacement of the dependency under test.
@@ -235,7 +306,7 @@ const VALID_VERDICTS = ["fail", "skipped", "pass"] as const;
 
 </invalid_test_owned_constant>
 
-**3. Data that only the test needs and hence owns**
+3. **Data that only the test needs and hence owns**
 
 **THERE ARE NO VALID TEST-OWNED CONSTANTS!**
 
@@ -307,6 +378,31 @@ Strings and numbers are never valid fixtures. A string literal that represents a
 
 </test_data_policy>
 
+<test_infrastructure>
+Shared test infrastructure lives in a `testing/` directory at the project root and is imported via path aliases.
+
+```text
+testing/
++-- harnesses/
+|   +-- index.ts
+|   +-- hugo.ts          # Hugo build harness
+|   +-- postgres.ts      # PostgreSQL harness
+|   +-- factories.ts     # Typed domain factories
++-- fixtures/
+    +-- values.ts        # TYPICAL, EDGES collections
+```
+
+Configure the `@testing` alias in `tsconfig.json` and `vitest.config.ts`:
+
+```typescript
+import { createAuditResult } from "@testing/harnesses/factories";
+import { createHugoHarness } from "@testing/harnesses/hugo";
+```
+
+Co-located `./helpers` are acceptable only when the helper serves a single test file. Anything shared across two or more test files belongs in `testing/`.
+
+</test_infrastructure>
+
 <script_testing>
 Committed `scripts/` entrypoints get thin tests:
 
@@ -329,10 +425,43 @@ Reject or rewrite these patterns:
 - Production modules created only to aggregate values for tests
 - Deep relative imports into stable shared test infrastructure
 - Manual argument parsing in script tests when the repo has a canonical parser
+- `it.skip`, `it.skipIf`, and `test.skip` on credentialed evidence -- use `requireCredentials()` that throws instead
 
 The cross-file literal-reuse check (check IDs `L3`/`L4`: literal in a test also present in `src/`, or duplicated across test files) is not an ESLint rule — it runs as `spx validation literal` because cross-file analysis doesn't fit ESLint's per-file execution model.
 
+<playwright_request_context>
+
+Playwright's `{ request }` fixture uses its own `APIRequestContext` that does NOT share cookies with the `BrowserContext`. Cookies set via `context.addCookies(...)` do not reach `{ request }`.
+
+```typescript
+// WRONG: request fixture -- no cookie inheritance
+test("API returns flag-gated payload", async ({ request }) => {
+  const response = await request.get("/api/data"); // cookie absent
+  expect(await response.json()).toContain(FLAGGED_ITEM); // fails
+});
+
+// RIGHT: context.request -- shares cookies with browser context
+test("API returns flag-gated payload", async ({ context }) => {
+  const response = await context.request.get("/api/data"); // cookie present
+  expect(await response.json()).toContain(FLAGGED_ITEM);
+});
+```
+
+`page.request` also shares cookies with the browser context and works when a test already uses a page.
+
+</playwright_request_context>
+
 </anti_patterns>
+
+<reference_guides>
+
+| File                                                          | When to read                                                  |
+| ------------------------------------------------------------- | ------------------------------------------------------------- |
+| `${CLAUDE_SKILL_DIR}/references/l1-patterns.md`               | Writing pure function, typed factory, or temp dir tests       |
+| `${CLAUDE_SKILL_DIR}/references/exception-implementations.md` | Implementing a Stage 5 exception from `/testing`              |
+| `${CLAUDE_SKILL_DIR}/references/l2-patterns.md`               | Writing tests that require real infrastructure (Docker, etc.) |
+
+</reference_guides>
 
 <success_criteria>
 TypeScript test guidance follows this standard when:
