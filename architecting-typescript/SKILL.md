@@ -5,14 +5,7 @@ description: >-
 allowed-tools: Read, Write, Glob, Grep
 ---
 
-!`cat "${CLAUDE_SKILL_DIR}/../standardizing-typescript-architecture/SKILL.md" || echo "standardizing-typescript-architecture not found — invoke typescript:standardizing-typescript-architecture manually"`
-
-<codex_fallback>
-If you see `cat` commands above rather than skill content, shell injection did not run (Codex or similar environment). Invoke these skills now before proceeding:
-
-1. `typescript:standardizing-typescript-architecture`
-
-</codex_fallback>
+Invoke the `typescript:standardizing-typescript-architecture` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
 <essential_principles>
 **Standards are pre-loaded above.** Check for `spx/local/typescript-architecture.md` at the repository root and read it if it exists as the repo-local specialization.
@@ -200,15 +193,15 @@ When you complete ADR creation, provide:
 
 ### ADRs Written
 
-| ADR                                                         | Scope          | Decision Summary                 |
-| ----------------------------------------------------------- | -------------- | -------------------------------- |
-| [Type Safety](spx/21-type-safety.adr.md)                    | Product        | Use strict TS, Zod at boundaries |
-| [CLI Structure](spx/32-cli.enabler/21-cli-structure.adr.md) | 32-cli enabler | Commander.js with subcommands    |
+| ADR                                | Scope   | Decision Summary            |
+| ---------------------------------- | ------- | --------------------------- |
+| [{ADR Name}]({path to ADR})        | {scope} | {one-line decision summary} |
+| [{Second ADR Name}]({path to ADR}) | {scope} | {one-line decision summary} |
 
 ### Key Constraints
 
-1. {constraint from [Type Safety](spx/21-type-safety.adr.md)}
-2. {constraint from [CLI Structure](spx/32-cli.enabler/21-cli-structure.adr.md)}
+1. {constraint from [{ADR Name}]({path to ADR})}
+2. {constraint from [{Second ADR Name}]({path to ADR})}
 ```
 
 </output_format>

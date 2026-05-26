@@ -4,14 +4,7 @@ description: Use when asked by the user to invoke the TypeScript architecture au
 allowed-tools: Read, Grep
 ---
 
-!`cat "${CLAUDE_SKILL_DIR}/../standardizing-typescript-architecture/SKILL.md" || echo "standardizing-typescript-architecture not found — invoke typescript:standardizing-typescript-architecture manually"`
-
-<codex_fallback>
-If you see `cat` commands above rather than skill content, shell injection did not run (Codex or similar environment). Invoke these skills now before proceeding:
-
-1. `typescript:standardizing-typescript-architecture`
-
-</codex_fallback>
+Invoke the `typescript:standardizing-typescript-architecture` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
 <objective>
 Review ADRs against `/standardizing-typescript-architecture` conventions, `/testing` principles, atemporal voice rules, and applicable PDR constraints. Produce a structured verdict per concern. This skill is read-only -- it produces verdicts, not code changes.

@@ -4,23 +4,13 @@ description: Use when asked by the user to invoke the TypeScript test audit skil
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
-!`cat "${CLAUDE_SKILL_DIR}/../standardizing-typescript/SKILL.md" || echo "standardizing-typescript not found — invoke skill typescript:standardizing-typescript now"`
+Invoke the `typescript:standardizing-typescript` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
-!`cat "${CLAUDE_SKILL_DIR}/../standardizing-typescript-tests/SKILL.md" || echo "standardizing-typescript-tests not found — invoke skill typescript:standardizing-typescript-tests now"`
+Invoke the `typescript:standardizing-typescript-tests` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
-!`cat "${CLAUDE_SKILL_DIR}/../../../spec-tree/skills/testing/SKILL.md" || echo "testing not found — invoke skill spec-tree:testing now"`
+Invoke the `spec-tree:testing` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
-!`cat "${CLAUDE_SKILL_DIR}/../../../spec-tree/skills/auditing-tests/SKILL.md" || echo "auditing-tests not found — invoke skill spec-tree:auditing-tests now"`
-
-<codex_fallback>
-If you see `cat` commands above rather than skill content, shell injection did not run (Codex or similar environment). Invoke these skills now before proceeding:
-
-1. Skill `typescript:standardizing-typescript`
-2. Skill `typescript:standardizing-typescript-tests`
-3. Skill `spec-tree:testing`
-4. Skill `spec-tree:auditing-tests`
-
-</codex_fallback>
+Invoke the `spec-tree:auditing-tests` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
 <objective>
 
@@ -38,16 +28,8 @@ A gate failure skips the next gate.
 1. Invoking 4 skills: Already done above.
 2. Read local overlay files, they supersede any skills and are loaded below:
 
-!`cat "spx/local/typescript.md" || echo "spx/local/typescript.md not found; apply skills only."`
-!`cat "spx/local/typescript-tests.md" || echo "spx/local/typescript-tests.md not found; apply skills only."`
-
-<codex_fallback>
-If you see `cat` commands above, shell injection did not run (Codex or similar environment). Look for product-specific overlay files:
-
-1. Read `spx/local/typescript.md` if it exists. It supersedes any skills.
-2. Read `spx/local/typescript-tests.md` if it exists. It supersedes any skills.
-
-</codex_fallback>
+Read `spx/local/typescript.md` if it exists; otherwise apply the loaded skills only.
+Read `spx/local/typescript-tests.md` if it exists; otherwise apply the loaded skills only.
 
 3. Invoke `/contextualizing` on the spec node under audit — `<SPEC_TREE_CONTEXT>` marker must be present before Gate 1
 
