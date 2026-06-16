@@ -23,9 +23,9 @@ Install these first:
 | Skill | Description |
 | ----- | ----------- |
 | `architecting-typescript` | writing ADRs for TypeScript |
-| `auditing-typescript` | Use when asked by the user to invoke the TypeScript code audit skill |
-| `auditing-typescript-architecture` | Use when asked by the user to invoke the TypeScript architecture audit skill |
-| `auditing-typescript-tests` | Use when asked by the user to invoke the TypeScript test audit skill |
+| `auditing-typescript` | auditing, reviewing, or evaluating TypeScript implementation code for design flaws and ADR compliance |
+| `auditing-typescript-architecture` | auditing ADRs for TypeScript |
+| `auditing-typescript-tests` | auditing TypeScript test evidence, reviewing TypeScript tests for spec-tree evidence quality, or evaluating TypeScript test infrastructure |
 | `coding-typescript` | writing or fixing implementation code for TypeScript |
 | `standardizing-typescript` | TypeScript code standards enforced across all skills |
 | `standardizing-typescript-architecture` | TypeScript ADR conventions enforced across architect and auditor skills |
