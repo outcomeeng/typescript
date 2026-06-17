@@ -1,11 +1,11 @@
 ---
-name: architecting-typescript
+name: architect-typescript
 description: >-
   ALWAYS invoke this skill when writing ADRs for TypeScript.
 allowed-tools: Read, Write, Glob, Grep
 ---
 
-Invoke the `typescript:standardizing-typescript-architecture` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
+Invoke the `typescript:typescript-architecture-standards` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
 <essential_principles>
 **Standards are pre-loaded above.** Check for `spx/local/typescript-architecture.md` at the repository root and read it if it exists, applying it as repo-local routing to the product's governing specs and decisions. A local overlay supplements skill behavior; it does not declare product truth.
@@ -23,11 +23,11 @@ Invoke the `typescript:standardizing-typescript-architecture` skill before proce
 
 When creating ADRs for a spec-tree work item (enabler/outcome), ensure complete hierarchical context is loaded:
 
-1. **Invoke `spec-tree:contextualizing`** with the node path
+1. **Invoke `spec-tree:contextualize`** with the node path
 2. **Verify all ancestor ADRs/PDRs are loaded** - Must understand and honor all decision records in hierarchy
 3. **Read the node spec** - Requirements, Test Strategy, and Outcomes sections
 
-**The `spec-tree:contextualizing` skill provides:**
+**The `spec-tree:contextualize` skill provides:**
 
 - Complete ADR/PDR hierarchy (product and ancestor decisions at all levels)
 - Node spec with requirements, test strategy, and outcomes
@@ -59,7 +59,7 @@ Read these files to understand product structure and workflow:
 
 - `spx/CLAUDE.md` - Product navigation, work item status, sparse integer index dependencies
 
-For TypeScript test standards and methodology, invoke `/standardizing-typescript-tests` and `/testing-typescript`
+For TypeScript test standards and methodology, invoke `/typescript-test-standards` and `/test-typescript`
 
 **3. Existing Decisions**
 
@@ -88,7 +88,7 @@ Produce ADRs. The scope depends on the decision:
 - Append using: `new = floor((last + 99) / 2)`
 - First ADR in scope: use 21
 
-See `/authoring` skill for complete ordering rules.
+See `/author` skill for complete ordering rules.
 
 **Within-scope dependency order**: adr-21 must be decided before adr-37 (lower sparse integer index = dependency).
 
@@ -104,13 +104,13 @@ Execute these phases IN ORDER.
 1. Read the node spec completely (requirements, assertions)
 2. Read product context:
    - `spx/CLAUDE.md` - Product structure, navigation, work item management
-3. Read `/standardizing-typescript-architecture` for canonical ADR conventions
-4. Invoke `/standardizing-typescript-tests` for canonical test standards
-5. Invoke `/testing-typescript` for TypeScript testing methodology and patterns
+3. Read `/typescript-architecture-standards` for canonical ADR conventions
+4. Invoke `/typescript-test-standards` for canonical test standards
+5. Invoke `/test-typescript` for TypeScript testing methodology and patterns
 6. Read existing ADRs for consistency:
    - `spx/{NN}-{slug}.adr.md` - Product-level ADRs
    - ADRs interleaved within enabler/outcome nodes
-7. Read `/authoring` skill for ADR template
+7. Read `/author` skill for ADR template
 
 **Phase 1: Identify Decisions Needed**
 
@@ -134,7 +134,7 @@ For each decision, consider:
 
 **Phase 3: Write ADRs**
 
-Use the authoritative template (from `/understanding`). The ADR is decision-first:
+Use the authoritative template (from `/understand`). The ADR is decision-first:
 
 1. **Title + decision**: `# {Decision Name}`, then the decision stated directly as permanent truth in 1-3 sentences -- what it governs and what it decides. No `Purpose` heading, no `Context` section; business impact and constraints fold into the decision statement and Rationale
 2. **Rationale**: Why this is right given the constraints; name a rejected alternative only when it sharpens the decision
@@ -186,16 +186,16 @@ Detailed patterns and principles:
 When ADR creation is complete, provide:
 
 ```markdown
-## Architectural Decisions Created
+**Architectural Decisions Created**
 
-### ADRs Written
+**ADRs Written**
 
 | ADR                                | Scope   | Decision Summary            |
 | ---------------------------------- | ------- | --------------------------- |
 | [{ADR Name}]({path to ADR})        | {scope} | {one-line decision summary} |
 | [{Second ADR Name}]({path to ADR}) | {scope} | {one-line decision summary} |
 
-### Key Constraints
+**Key Constraints**
 
 1. {constraint from [{ADR Name}]({path to ADR})}
 2. {constraint from [{Second ADR Name}]({path to ADR})}
@@ -206,7 +206,7 @@ When ADR creation is complete, provide:
 <success_criteria>
 ADR is complete when:
 
-- [ ] Verification (`### Audit`) includes testability constraints (DI, no mocking) per `/standardizing-typescript-architecture`
+- [ ] Verification (`### Audit`) includes testability constraints (DI, no mocking) per `/typescript-architecture-standards`
 - [ ] All architectural choices documented
 - [ ] Verification rules defined as ALWAYS/NEVER guarantees and boundaries
 - [ ] No contradictions with existing ADRs

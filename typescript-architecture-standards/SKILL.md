@@ -1,5 +1,5 @@
 ---
-name: standardizing-typescript-architecture
+name: typescript-architecture-standards
 user-invocable: false
 description: >-
   TypeScript ADR conventions enforced across architect and auditor skills.
@@ -8,11 +8,11 @@ allowed-tools: Read
 ---
 
 <objective>
-Canonical ADR conventions for TypeScript projects. Defines what sections an ADR has, how testability appears in Verification rules, and TypeScript-specific DI patterns. Loaded by `/architecting-typescript` (to produce conformant ADRs) and `/auditing-typescript-architecture` (to validate them).
+Canonical ADR conventions for TypeScript projects. Defines what sections an ADR has, how testability appears in Verification rules, and TypeScript-specific DI patterns. Loaded by `/architect-typescript` (to produce conformant ADRs) and `/audit-typescript-architecture` (to validate them).
 </objective>
 
 <reference_note>
-This is a reference skill. The architect and auditor load these conventions automatically. Invoke `/architecting-typescript` to write ADRs or `/auditing-typescript-architecture` to review them.
+This is a reference skill. The architect and auditor load these conventions automatically. Invoke `/architect-typescript` to write ADRs or `/audit-typescript-architecture` to review them.
 </reference_note>
 
 <repo_local_overlay>
@@ -25,7 +25,7 @@ A local overlay supplements skill behavior; it does not declare product truth.
 
 <adr_sections>
 
-The ADR template (from `/understanding`) is decision-first — the decision is stated directly under the title, with no `Purpose` heading and no preamble:
+The ADR template (from `/understand`) is decision-first — the decision is stated directly under the title, with no `Purpose` heading and no preamble:
 
 1. **Title + decision** -- `# {Decision Name}`, then the decision stated directly as permanent truth in 1-3 sentences: what it governs and what it decides.
 2. **Rationale** -- Why this is right given the constraints. Name a rejected alternative only when it sharpens the decision. Omit if self-evident.
@@ -40,16 +40,16 @@ The ADR template (from `/understanding`) is decision-first — the decision is s
 
 <testability_in_verification>
 
-ADRs do not assign testing levels. They establish constraints that *make levels achievable*. The `/testing` skill assigns levels when it reads spec assertions alongside ADR constraints. This separation follows the truth hierarchy: ADR governs, spec declares, test verifies.
+ADRs do not assign testing levels. They establish constraints that *make levels achievable*. The `/test` skill assigns levels when it reads spec assertions alongside ADR constraints. This separation follows the truth hierarchy: ADR governs, spec declares, test verifies.
 
 **The mechanism:** Verification rules under `### Audit` that mandate DI, prohibit mocking, and require observable interfaces.
 
 **Correct pattern -- testability as ALWAYS/NEVER under `### Audit`:**
 
 ```markdown
-## Verification
+**Verification**
 
-### Audit
+**Audit**
 
 - ALWAYS: external tool invocations accept a dependency-injected runner parameter -- enables isolated testing without mocking ([audit])
 - ALWAYS: configuration accepts typed inputs, not environment reads -- enables `l1` verification of config logic ([audit])
@@ -60,21 +60,21 @@ ADRs do not assign testing levels. They establish constraints that *make levels 
 **What this replaces -- the following does NOT belong in an ADR:**
 
 ```text
-## Testing Strategy                    <-- NOT a valid ADR section
+**Testing Strategy                    <-- NOT a valid ADR section**
 
-### Level Assignments                  <-- downstream concern for /testing
+**Level Assignments                  <-- downstream concern for /test**
 
 | Component        | Level | Justification                   |
 | ---------------- | ----- | ------------------------------- |
 | Command building | `l1`  | Pure function, no external deps |
 | Hugo invocation  | `l2`  | Needs real Hugo binary          |
 
-### Escalation Rationale               <-- downstream concern for /testing
+**Escalation Rationale               <-- downstream concern for /test**
 
 - `l1` -> `l2`: Hugo binary required for acceptance
 ```
 
-**Why:** Level assignments depend on the spec's assertions, the product's infrastructure, and the `/testing` skill's Five Factors analysis. The ADR cannot know these at authoring time. The ADR's job is to establish constraints (DI, no mocking) that make the right levels *possible*.
+**Why:** Level assignments depend on the spec's assertions, the product's infrastructure, and the `/test` skill's Five Factors analysis. The ADR cannot know these at authoring time. The ADR's job is to establish constraints (DI, no mocking) that make the right levels *possible*.
 
 </testability_in_verification>
 
@@ -147,7 +147,7 @@ The auditor checks for these violations in ADR text:
 
 - `vi.mock()` or `jest.mock()` mentioned as an approach -- reject
 - "mock at boundary" or "mock the X calls" -- reject
-- "stub" or "fake" without referencing a `/testing` exception case -- reject
+- "stub" or "fake" without referencing a `/test` exception case -- reject
 
 Correct ADR language: "Use dependency injection to isolate X from Y" or "Accept X as a parameter implementing the Y interface."
 
@@ -155,7 +155,7 @@ Correct ADR language: "Use dependency injection to isolate X from Y" or "Accept 
 
 <level_context>
 
-The architect needs to understand testing levels to write effective Verification rules. The auditor needs them to verify that Verification rules enable the right levels. These definitions come from `/testing`.
+The architect needs to understand testing levels to write effective Verification rules. The auditor needs them to verify that Verification rules enable the right levels. These definitions come from `/test`.
 
 | Level | TypeScript infrastructure               | When to use                                   |
 | ----- | --------------------------------------- | --------------------------------------------- |
@@ -178,12 +178,12 @@ The architect needs to understand testing levels to write effective Verification
 
 | Anti-pattern                  | Why it is wrong                                | Where it belongs                   |
 | ----------------------------- | ---------------------------------------------- | ---------------------------------- |
-| `## Testing Strategy` section | Not in the authoritative ADR template          | `/testing` skill output            |
-| Level assignment tables       | Downstream concern; depends on spec assertions | `/testing` Stage 2                 |
-| Escalation rationale          | Downstream concern; depends on product infra   | `/testing` Stage 2                 |
+| `## Testing Strategy` section | Not in the authoritative ADR template          | `/test` skill output               |
+| Level assignment tables       | Downstream concern; depends on spec assertions | `/test` Stage 2                    |
+| Escalation rationale          | Downstream concern; depends on product infra   | `/test` Stage 2                    |
 | `## Status` field             | Not in the authoritative ADR template          | Git history / commit metadata      |
 | File names to delete          | Temporal; becomes stale immediately            | Code review against ADR invariants |
 | Migration plans               | Temporal; narrates a transition                | Code review / work items           |
-| Implementation code           | ADRs constrain implementation, not provide it  | `/coding-typescript`               |
+| Implementation code           | ADRs constrain implementation, not provide it  | `/code-typescript`                 |
 
 </anti_patterns>

@@ -1,5 +1,5 @@
 ---
-name: standardizing-typescript
+name: typescript-standards
 user-invocable: false
 description: >-
   TypeScript code standards enforced across all skills. Loaded by other skills, not invoked directly.
@@ -7,7 +7,7 @@ allowed-tools: Read
 ---
 
 <objective>
-TypeScript code standards enforced by tsc strict mode, eslint, and manual review. Defines what `/coding-typescript` must follow and `/auditing-typescript` enforces.
+TypeScript code standards enforced by tsc strict mode, eslint, and manual review. Defines what `/code-typescript` must follow and `/audit-typescript` enforces.
 </objective>
 
 <quick_start>
@@ -19,16 +19,14 @@ Code follows these standards when tsc strict mode and eslint checks pass. See su
 </success_criteria>
 
 <reference_note>
-This is a reference skill. Other TypeScript skills reference these standards. It is not invoked directly—invoke `/coding-typescript`, `/testing-typescript`, or `/auditing-typescript` instead.
+This is a reference skill. Other TypeScript skills reference these standards. It is not invoked directly—invoke `/code-typescript`, `/test-typescript`, or `/audit-typescript` instead.
 
-These standards apply to ALL TypeScript code, including tests and scripts. `/standardizing-typescript-tests` adds stricter rules for test code.
+These standards apply to ALL TypeScript code, including tests and scripts. `/typescript-test-standards` adds stricter rules for test code.
 </reference_note>
 
 <repo_local_overlay>
 When another skill loads this reference inside a repository, it must also check for `spx/local/typescript.md` at the repository root. Read that file after this reference if it exists and apply it as repo-local routing to the product's governing specs and decisions. A local overlay supplements skill behavior; it does not declare product truth.
 </repo_local_overlay>
-
----
 
 <type_safety>
 
@@ -118,8 +116,6 @@ function handle(value: string | number): void {
 
 </type_safety>
 
----
-
 <production_constants>
 
 Production code must name domain-significant literals and export reusable constants from the module that owns them.
@@ -169,11 +165,9 @@ const first = items[0];
 const last = items[items.length - 1];
 ```
 
-For test values, fixture placement, and inline diagnostics, follow `/standardizing-typescript-tests`.
+For test values, fixture placement, and inline diagnostics, follow `/typescript-test-standards`.
 
 </production_constants>
-
----
 
 <source_of_truth_registries>
 
@@ -197,8 +191,6 @@ The tuple cast is only for `z.enum`'s non-empty tuple signature. Keep the runtim
 Hand-maintained unions that can drift from the runtime registry are rejected.
 
 </source_of_truth_registries>
-
----
 
 <script_boundaries>
 
@@ -237,8 +229,6 @@ const options = parseArgsWithRepoStandard(process.argv.slice(2));
 Imported orchestrator modules should still follow the normal codebase standards for configuration, logging, and specification coverage.
 
 </script_boundaries>
-
----
 
 <error_handling>
 
@@ -302,8 +292,6 @@ throw new ValidationError(
 
 </error_handling>
 
----
-
 <security>
 
 ```typescript
@@ -332,7 +320,7 @@ if (!apiKey) {
 }
 ```
 
-Context matters for security rules—a CLI tool invoked by the user has different trust boundaries than a web service. Reading env vars in `scripts/` is acceptable boundary behavior; imported modules should prefer typed config once past that boundary. See `/auditing-typescript` for false positive handling.
+Context matters for security rules—a CLI tool invoked by the user has different trust boundaries than a web service. Reading env vars in `scripts/` is acceptable boundary behavior; imported modules should prefer typed config once past that boundary. See `/audit-typescript` for false positive handling.
 
 **ESLint rules enforced:**
 
@@ -344,8 +332,6 @@ Context matters for security rules—a CLI tool invoked by the user has differen
 | (manual)    | `child_process.exec()` with untrusted input |
 
 </security>
-
----
 
 <code_hygiene>
 
@@ -392,8 +378,6 @@ function handle(input: string): void {
 `scripts/` entrypoints are the exception: console output is acceptable there because they are terminal boundaries. Imported modules should still use the repo's normal logging pattern.
 
 </code_hygiene>
-
----
 
 <import_hygiene>
 
@@ -473,8 +457,6 @@ import { tokenize } from "./tokens";
 ```
 
 </import_hygiene>
-
----
 
 <rejection_criteria_summary>
 

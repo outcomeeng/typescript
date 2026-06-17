@@ -1,6 +1,6 @@
 # Common ADR Patterns for TypeScript
 
-These patterns show how testability constraints appear under the `## Verification` section's `### Audit` subsection. See `/standardizing-typescript-architecture` for the canonical ADR section structure.
+These patterns show how testability constraints appear under the `## Verification` section's `### Audit` subsection. See `/typescript-architecture-standards` for the canonical ADR section structure.
 
 ## Pattern: External Tool Integration
 

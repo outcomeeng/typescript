@@ -18,7 +18,7 @@ Keep production code testable before adding infrastructure. Separate command set
 </test_shape>
 
 <file_naming>
-Use the canonical TypeScript test filename pattern from `/standardizing-typescript-tests`: `<subject>.<evidence>.<level>[.<runner>].test.ts`.
+Use the canonical TypeScript test filename pattern from `/typescript-test-standards`: `<subject>.<evidence>.<level>[.<runner>].test.ts`.
 
 Examples: `postgres-user-store.scenario.l2.test.ts`, `checkout.scenario.l2.playwright.test.ts`, `asset-builder.conformance.l2.test.ts`.
 </file_naming>

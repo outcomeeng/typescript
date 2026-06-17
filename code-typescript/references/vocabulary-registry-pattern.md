@@ -113,4 +113,4 @@ describe("KIND_REGISTRY", () => {
 });
 ```
 
-Tests that need a scoped registry construct their own as-const object and pass it in — the production registry is never intercepted. See `testing-typescript` for the DI pattern.
+Tests that need a scoped registry construct their own as-const object and pass it in — the production registry is never intercepted. See `test-typescript` for the DI pattern.

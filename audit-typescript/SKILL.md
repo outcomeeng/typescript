@@ -1,12 +1,12 @@
 ---
-name: auditing-typescript
+name: audit-typescript
 description: >-
   ALWAYS invoke this skill when auditing, reviewing, or evaluating TypeScript implementation code for design flaws and ADR compliance.
   NEVER audit TypeScript code without this skill.
 allowed-tools: Read, Bash, Glob, Grep
 ---
 
-Invoke the `typescript:standardizing-typescript` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
+Invoke the `typescript:typescript-standards` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
 <objective>
 
@@ -14,8 +14,8 @@ Adversarial code review through comprehension. Find design flaws that automated 
 
 This skill is read-only. It produces verdicts, not commits or fixes.
 
-**Test evidence quality is audited by skill `/auditing-typescript-tests`.** This skill audits implementation code, not test code.
-Almost every TypeScript file must be covered by tests. Invoke `/auditing-typescript-tests` separately as part of the overall auditing workflow.
+**Test evidence quality is audited by skill `/audit-typescript-tests`.** This skill audits implementation code, not test code.
+Almost every TypeScript file must be covered by tests. Invoke `/audit-typescript-tests` separately as part of the overall auditing workflow.
 
 **Standards are pre-loaded above.** Check for `spx/local/typescript.md` at the repository root and read it if it exists, applying it as repo-local routing to the product's governing specs and decisions. A local overlay supplements skill behavior; it does not declare product truth.
 
@@ -23,7 +23,7 @@ Almost every TypeScript file must be covered by tests. Invoke `/auditing-typescr
 
 <quick_start>
 
-1. Check for `spx/local/typescript.md` if present, then invoke `/testing` for methodology + `/testing-typescript` for TypeScript patterns
+1. Check for `spx/local/typescript.md` if present, then invoke `/test` for methodology + `/test-typescript` for TypeScript patterns
 2. Load product config: `CLAUDE.md`, `tsconfig.json`, `package.json` (Phase 0)
 3. Run automated gates -- product validation command (Phase 1, blocking)
 4. Run tests -- verify all pass (Phase 2, blocking)
@@ -45,7 +45,7 @@ Automated tools catch syntax errors, type mismatches, and lint violations. Claud
 
 **Test evidence is out of scope.**
 
-`/auditing-typescript-tests` evaluates whether tests provide genuine evidence using the 4-property model (coupling, falsifiability, alignment, coverage). This skill verifies tests PASS, not whether they have evidentiary value. Do not duplicate that work.
+`/audit-typescript-tests` evaluates whether tests provide genuine evidence using the 4-property model (coupling, falsifiability, alignment, coverage). This skill verifies tests PASS, not whether they have evidentiary value. Do not duplicate that work.
 
 **Binary verdict, no caveats.**
 
@@ -77,7 +77,7 @@ If the product lacks its own linter configs, use the reference configs in `${CLA
 
 Non-zero exit = REJECTED. Do not proceed.
 
-Do NOT manually re-check what linters catch. If the product's linters are properly configured per `/standardizing-typescript`, they handle type annotations, naming, unused imports, commented-out code, and security rules.
+Do NOT manually re-check what linters catch. If the product's linters are properly configured per `/typescript-standards`, they handle type annotations, naming, unused imports, commented-out code, and security rules.
 
 **Note**: Some rules require manual verification during Phase 3 -- deep relative imports, unqualified `any`, `@ts-ignore` without justification.
 
@@ -125,7 +125,7 @@ For the codebase as a whole:
 
 **3.3 Import Evaluation**
 
-Evaluate import structure using the same vocabulary as `/auditing-typescript-tests`:
+Evaluate import structure using the same vocabulary as `/audit-typescript-tests`:
 
 | Import pattern                                     | Classification                     |
 | -------------------------------------------------- | ---------------------------------- |
@@ -169,7 +169,7 @@ These are real failures from past audits. Study them to avoid repeating them.
 
 **Rejected code for a false positive.** Claude flagged a parameter as "dead code" because it wasn't used in the function body. The parameter was required by a `CommandHandler` interface contract -- other implementations used it. Before flagging dead parameters, check if the function implements an interface or Protocol.
 
-**Tried to evaluate test evidence instead of delegating.** Claude found `vi.fn()` in tests and spent time analyzing whether it broke coupling. That's `/auditing-typescript-tests`' job. Claude should have verified tests PASS (Phase 2) and moved on to comprehending the implementation code.
+**Tried to evaluate test evidence instead of delegating.** Claude found `vi.fn()` in tests and spent time analyzing whether it broke coupling. That's `/audit-typescript-tests`' job. Claude should have verified tests PASS (Phase 2) and moved on to comprehending the implementation code.
 
 **Distracted by style while missing a logic bug.** Claude spent review time on naming conventions, import ordering, and JSDoc completeness. Meanwhile, a branch condition was inverted -- `if (isValid)` should have been `if (!isValid)`. Comprehension (understanding what the code does) must come before style. Style is the linter's job.
 
@@ -179,14 +179,14 @@ These are real failures from past audits. Study them to avoid repeating them.
 
 <output_format>
 
-Emit the verdict as JSON conforming to the canonical schema in `plugins/spec-tree/skills/auditing/scripts/verdict.py`. The skill's entire output is the JSON verdict. The caller captures the JSON and routes it through `emit_verdict.py` with the requested `--format` (defaulting to `markdown+json` for PR-comment delivery).
+Emit the verdict as JSON conforming to the canonical schema in `plugins/spec-tree/skills/audit/scripts/verdict.py`. The skill's entire output is the JSON verdict. The caller captures the JSON and routes it through `emit_verdict.py` with the requested `--format` (defaulting to `markdown+json` for PR-comment delivery).
 
 The skill's `overall` is `PASS` iff every concern row is `PASS` or `UNKNOWN` (N/A maps to `UNKNOWN`); `FAIL` if any concern is `FAIL`. Findings carry severity `REJECT` for blocking violations.
 
 ```json
 {
   "schema_version": 1,
-  "skill": "auditing-typescript",
+  "skill": "audit-typescript",
   "target": "<scope-target>",
   "overall": "PASS | FAIL | UNKNOWN",
   "rows": [
@@ -208,7 +208,7 @@ Each finding carries `file`, `line`, `rule` (the concern name from the verdict t
 <what_to_avoid>
 
 - Do NOT re-check linter concerns (Phase 1 handles those)
-- Do NOT evaluate test evidence quality (delegate to `/auditing-typescript-tests`)
+- Do NOT evaluate test evidence quality (delegate to `/audit-typescript-tests`)
 - Do NOT commit or modify code (this skill is read-only)
 - Do NOT approve with caveats (binary verdict only)
 - Do NOT reject for code style when comprehension found no design flaws

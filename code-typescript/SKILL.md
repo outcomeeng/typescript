@@ -1,13 +1,13 @@
 ---
-name: coding-typescript
+name: code-typescript
 description: >-
   ALWAYS invoke this skill when writing or fixing implementation code for TypeScript.
 allowed-tools: Read, Write, Bash, Glob, Grep, Edit
 ---
 
-Invoke the `typescript:standardizing-typescript` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
+Invoke the `typescript:typescript-standards` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
-Invoke the `typescript:standardizing-typescript-tests` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
+Invoke the `typescript:typescript-test-standards` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
 <accessing_skill_files>
 When this skill is invoked, Claude Code provides the base directory in the loading message:
@@ -41,7 +41,7 @@ Standards are pre-loaded above. Check for `spx/local/typescript.md` and `spx/loc
 <mandatory_code_patterns>
 These patterns are enforced by the reviewer. Violations will be REJECTED.
 
-### Constants
+**Constants**
 
 All literal values (strings, numbers) must be module-level constants:
 
@@ -75,7 +75,7 @@ it("rejects below minimum", () => {
 });
 ```
 
-### Dependency Injection
+**Dependency Injection**
 
 External dependencies must be injected, not imported directly:
 
@@ -130,7 +130,7 @@ async function syncFiles(
 <codebase_discovery>
 **BEFORE writing any code, discover what already exists.**
 
-### Phase 0: Discovery (MANDATORY)
+**Phase 0: Discovery (MANDATORY)**
 
 Run these searches before implementation:
 
@@ -151,7 +151,7 @@ Glob/Grep: actual modules, harnesses, fixtures, registries, and entrypoints
 Read: existing files in the same target directory
 ```
 
-### What to Discover
+**What to Discover**
 
 | Question                                            | How to Answer It                                                                |
 | --------------------------------------------------- | ------------------------------------------------------------------------------- |
@@ -163,7 +163,7 @@ Read: existing files in the same target directory
 | How are configs structured?                         | Find config modules and config docs; do not infer config policy from ad hoc use |
 | If this is a script, which arg parser is canonical? | Read `package.json`, docs, and existing checked-in `scripts/` entrypoints       |
 
-### Discovery Anti-Patterns
+**Discovery Anti-Patterns**
 
 ```typescript
 // ❌ WRONG: Adding lodash when ramda is already used
@@ -184,7 +184,7 @@ class MyError extends Error {} // Product has @/errors
 
 **Authority rule**: Skills, specs, ADRs/PDRs, `CLAUDE.md`, and product docs answer "how should this be done?" Code search answers only "where is the existing artifact I should reuse?"
 
-### Script Entry Points
+**Script Entry Points**
 
 When editing a checked-in entrypoint under `scripts/`, treat it as boundary code:
 
@@ -201,7 +201,7 @@ Before changing script behavior, answer these questions:
 - Where is the spec for the orchestrator or harness?
 - Where are the tests for the orchestrator or harness?
 
-### Discovery Checklist
+**Discovery Checklist**
 
 Before writing code, confirm:
 
@@ -217,9 +217,9 @@ Before writing code, confirm:
 </codebase_discovery>
 
 <testing_methodology>
-**For TypeScript testing guidance, load both `/standardizing-typescript-tests` and `/testing-typescript`.**
+**For TypeScript testing guidance, load both `/typescript-test-standards` and `/test-typescript`.**
 
-Use `/standardizing-typescript-tests` as the canonical source for:
+Use `/typescript-test-standards` as the canonical source for:
 
 - filename conventions
 - allowed doubles and dependency-injection rules
@@ -227,7 +227,7 @@ Use `/standardizing-typescript-tests` as the canonical source for:
 - harness ownership and fixture placement
 - source-owned test values and inline diagnostics
 
-Use `/testing-typescript` for:
+Use `/test-typescript` for:
 
 - router-driven level selection
 - concrete Vitest and Playwright implementation patterns
@@ -242,11 +242,11 @@ When implementation changes affect test-owned interfaces, harnesses, or fixture 
 
 **If working on a spec-tree work item** (enabler/outcome):
 
-1. **Invoke `spec-tree:contextualizing` FIRST** with the node path
+1. **Invoke `spec-tree:contextualize` FIRST** with the node path
 2. **If context loading fails**: ABORT - do not proceed until all required documents exist
 3. **If context loading succeeds**: Proceed with implementation using loaded context
 
-**The `spec-tree:contextualizing` skill provides:**
+**The `spec-tree:contextualize` skill provides:**
 
 - Complete ancestor hierarchy (product → all ancestor nodes → target)
 - All ADRs/PDRs at every level along the path
@@ -257,10 +257,10 @@ When implementation changes affect test-owned interfaces, harnesses, or fixture 
 
 ```bash
 # By node path
-spec-tree:contextualizing spx/55-example.enabler/21-commands.outcome
+spec-tree:contextualize spx/55-example.enabler/21-commands.outcome
 ```
 
-**If `spec-tree:contextualizing` returns an error**: The error message will specify which document is missing and how to create it. Create the missing document before proceeding with implementation.
+**If `spec-tree:contextualize` returns an error**: The error message will specify which document is missing and how to create it. Create the missing document before proceeding with implementation.
 
 **If NOT working on spec-tree work item**: Proceed directly to implementation mode with provided spec.
 </context_loading>

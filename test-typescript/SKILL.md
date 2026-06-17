@@ -1,15 +1,15 @@
 ---
-name: testing-typescript
+name: test-typescript
 description: >-
   ALWAYS invoke this skill when writing or fixing tests for TypeScript.
 allowed-tools: Read, Bash, Glob, Grep, Write, Edit
 ---
 
-Invoke the `typescript:standardizing-typescript` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
+Invoke the `typescript:typescript-standards` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
-Invoke the `typescript:standardizing-typescript-tests` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
+Invoke the `typescript:typescript-test-standards` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
-Invoke the `spec-tree:testing` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
+Invoke the `spec-tree:test` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
 <objective>
 Write or fix test files for a node specification. This skill handles both:
@@ -27,7 +27,7 @@ Write or fix test files for a node specification. This skill handles both:
    - Action: Follow full workflow below
 
 2. **FIX mode** - Tests exist but were rejected by reviewer
-   - Check: Recent `/auditing-typescript-tests` output shows REJECT with specific issues
+   - Check: Recent `/audit-typescript-tests` output shows REJECT with specific issues
    - Action: Read the rejection, fix the specific issues, re-run tests
 
 **Always check which mode before proceeding.**
@@ -38,7 +38,7 @@ Write or fix test files for a node specification. This skill handles both:
 
 **Output:** Test files written to `{node}/tests/` directory
 
-**Prerequisites:** Standards and the `/testing` router are pre-loaded above. The router chooses evidence and level; this skill implements those decisions in TypeScript.
+**Prerequisites:** Standards and the `/test` router are pre-loaded above. The router chooses evidence and level; this skill implements those decisions in TypeScript.
 
 **Command placeholders:** Resolve `<product-test-command>`, `<product-typecheck-command>`, `<product-lint-command>`, and optional `<product-lint-fix-command>` from repository docs, package scripts, Makefile, Justfile, or local agent instructions. When sources conflict, use this priority: local agent instructions, repository docs, Justfile, Makefile, package scripts, raw tool fallback. Fallback examples for repos without wrappers: `npx vitest run`, `npx tsc --noEmit`, `npx eslint src/ test/`, and `npx eslint src/ test/ --fix`. If a wrapper rejects a path suffix, run the closest supported focused command and record the exact command used.
 
@@ -52,18 +52,18 @@ Check mode -> WRITE or FIX -> Execute -> Verify -> Report
 
 <write_mode_workflow>
 
-## WRITE Mode: Creating New Tests
+**WRITE Mode: Creating New Tests**
 
-### Step 1: Load Context
+**Step 1: Load Context**
 
 Read the node spec and related files:
 
 ```bash
 # Read node spec
-cat {node_path}/{slug}.outcome.md
+cat {node_path}/{slug}.md
 
 # Read parent node for context (if nested)
-cat {parent_path}/{slug}.enabler.md
+cat {parent_path}/{parent_slug}.md
 
 # Check for ADRs/PDRs that constrain testing approach
 ls {node_path}/../*.adr.md {node_path}/../*.pdr.md 2>/dev/null
@@ -77,9 +77,9 @@ Extract from the spec:
 
 **Note on Analysis sections:** The Analysis section documents what the spec author examined. It provides context but is not binding -- implementation may diverge as understanding deepens. Use it as a starting point, not a contract.
 
-### Step 2: Determine Evidence and Level
+**Step 2: Determine Evidence and Level**
 
-For each assertion, apply the `/testing` methodology:
+For each assertion, apply the `/test` methodology:
 
 | Evidence location               | Minimum level |
 | ------------------------------- | ------------- |
@@ -90,9 +90,9 @@ For each assertion, apply the `/testing` methodology:
 | Database, Docker                | `l2`          |
 | Real credentials, external APIs | `l3`          |
 
-### Step 3: Write Test Files
+**Step 3: Write Test Files**
 
-Create test files following `/standardizing-typescript-tests`:
+Create test files following `/typescript-test-standards`:
 
 **Mandatory elements:**
 
@@ -103,7 +103,7 @@ Create test files following `/standardizing-typescript-tests`:
 - No `vi.mock()` or `vi.fn()` replacing the dependency under test -- use typed DI interfaces
 - Vitest as default runner; `playwright` runner token when needed
 
-### Step 4: Verify Tests Fail (RED)
+**Step 4: Verify Tests Fail (RED)**
 
 ```bash
 # Resolve from repo docs or scripts; fallback: npx vitest run
@@ -114,7 +114,7 @@ If the canonical wrapper rejects a path suffix, run the closest supported focuse
 
 Tests should FAIL with import errors or assertion errors (implementation does not exist yet).
 
-### Step 5: Handle Specified Nodes
+**Step 5: Handle Specified Nodes**
 
 If the implementation module does not exist yet, tests fail on import -- breaking the quality gate. Add the node to `spx/EXCLUDE`:
 
@@ -129,7 +129,7 @@ The `spx` CLI reads this file and skips excluded nodes when running `spx test pa
 
 <literal_reuse_remediation>
 
-## ADR-21 Literal-Reuse Findings: What They Mean and How to Fix Them
+**Literal-Reuse Findings: What They Mean and How to Fix Them**
 
 The literal checker (`spx validation literal`) reports two finding kinds:
 
@@ -140,7 +140,7 @@ The literal checker (`spx validation literal`) reports two finding kinds:
 
 When a specific value like `"src/foo.ts"` appears in three test files, those three tests are asserting that the code handles exactly that path. They confirm the author's expectation about one hand-picked input. They reveal nothing about inputs the author didn't think of.
 
-### The WRONG fix: shared constants ("literal laundering")
+**The WRONG fix: shared constants ("literal laundering")**
 
 ```typescript
 // ❌ REJECTED: moving the hardcoded string to a constant changes nothing
@@ -152,7 +152,7 @@ This is literal laundering. The test now uses a named constant, but it still ass
 
 Shared test-owned constants that group hardcoded values (`TEST_FIXTURES`, `SAMPLE_PATHS`, etc.) are the same antipattern at scale.
 
-### The RIGHT fix: source contracts and domain generators
+**The RIGHT fix: source contracts and domain generators**
 
 Every string or number in a test represents either source-owned protocol data or an input domain. Identify the owner first.
 
@@ -170,7 +170,7 @@ fc.assert(
 );
 ```
 
-### Decision table for ADR-21 findings
+**Decision table for literal-reuse findings**
 
 | Finding                                                | What the value represents                                | Fix                                                                   |
 | ------------------------------------------------------ | -------------------------------------------------------- | --------------------------------------------------------------------- |
@@ -180,13 +180,13 @@ fc.assert(
 | Value is an expected output                            | Derived from input                                       | Compute it from the input inside the property test                    |
 | Value is a specific error message that IS the contract | Exact error text                                         | Allowed only in compliance tests that assert the exact message format |
 
-### When no generator exists for the domain
+**When no generator exists for the domain**
 
 Create one only when the domain has meaningful variability or composition. The generator lives in `testing/generators/{domain}.ts` and is imported via `@testing/generators/{domain}`.
 
 Do not create a generator that only returns `fc.constant(...)` for a singleton object. Improve the source module so it owns that constructor, then import it directly.
 
-### The only valid hardcoded strings in test files
+**The only valid hardcoded strings in test files**
 
 - `describe` / `it` block titles
 - Exact error message text in compliance tests where the format IS the contract (not a guess)
@@ -198,17 +198,17 @@ Everything else is source-owned data (import it), source-owned construction (exp
 
 <fix_mode_workflow>
 
-## FIX Mode: Fixing Rejected Tests
+**FIX Mode: Fixing Rejected Tests**
 
-### Step 1: Read Rejection Feedback
+**Step 1: Read Rejection Feedback**
 
-Find the most recent `/auditing-typescript-tests` output. Look for:
+Find the most recent `/audit-typescript-tests` output. Look for:
 
 - Specific file:line locations
 - Issue categories (evidentiary gap, missing property tests, etc.)
 - Required fixes
 
-### Step 2: Apply Fixes
+**Step 2: Apply Fixes**
 
 For each rejection reason:
 
@@ -220,9 +220,9 @@ For each rejection reason:
 | Missing property tests         | Add `fc.assert(fc.property(...))` for parsers/serializers            |
 | Source-owned value redefined   | Import from production module instead                                |
 | Wrong filename axes            | Rename to `<subject>.<evidence>.<level>[.<runner>].test.ts`          |
-| ADR-21 `[dupe]` / `[reuse]`    | See `<literal_reuse_remediation>` — generators, not shared constants |
+| Literal `[dupe]` / `[reuse]`   | See `<literal_reuse_remediation>` — generators, not shared constants |
 
-### Step 3: Verify Fixes
+**Step 3: Verify Fixes**
 
 ```bash
 # Run the node tests through the repository's canonical test command; fallback: npx vitest run
@@ -235,19 +235,19 @@ For each rejection reason:
 <product-lint-command> {node_path}/tests/
 ```
 
-### Step 4: Report What Was Fixed
+**Step 4: Report What Was Fixed**
 
 ```markdown
-## Tests Fixed
+**Tests Fixed**
 
-### Issues Addressed
+**Issues Addressed**
 
 | Issue           | Location       | Fix Applied                       |
 | --------------- | -------------- | --------------------------------- |
 | vi.mock() usage | foo.test.ts:15 | Replaced with typed DI interface  |
 | Magic value     | foo.test.ts:23 | Imported STATUS_CODES from module |
 
-### Verification
+**Verification**
 
 Tests run and fail for expected reasons (RED phase complete).
 ```
@@ -259,7 +259,7 @@ Tests run and fail for expected reasons (RED phase complete).
 Before declaring tests complete:
 
 - [ ] Each spec assertion has at least one test
-- [ ] Assertion type and level match `/testing` Stage 2
+- [ ] Assertion type and level match `/test` Stage 2
 - [ ] File names use `<subject>.<evidence>.<level>[.<runner>].test.ts`
 - [ ] No `vi.mock()` or `vi.fn()` replacing the dependency under test
 - [ ] Doubles are typed interfaces passed through DI
@@ -274,11 +274,11 @@ Before declaring tests complete:
 
 <patterns_reference>
 
-See `/standardizing-typescript-tests` for:
+See `/typescript-test-standards` for:
 
 - **File naming** - Evidence, level, and runner axes
 - **Level tooling** - Vitest vs Playwright, l1/l2/l3 infrastructure
-- **Router mapping** - `/testing` Stage decisions to TypeScript patterns
+- **Router mapping** - `/test` Stage decisions to TypeScript patterns
 - **l1 patterns** - Pure functions, typed factories, temp dirs
 - **Exception implementations** - The 6 exception cases in TypeScript
 - **l2 patterns** - Typed harness factory and usage
@@ -288,11 +288,11 @@ See `/standardizing-typescript-tests` for:
 - **Test data policy** - Source-owned constants, generators, harnesses, fixtures
 - **Anti-patterns** - What to reject or rewrite
 
-Read the matching level guide after choosing a level:
+Read the matching level guide from `/typescript-test-standards` after choosing a level:
 
-- `levels/l1-local-deterministic.md` - pure functions, temp dirs, standard local tools, Stage 5 doubles
-- `levels/l2-local-infrastructure.md` - Docker, local services, browsers, and product binaries
-- `levels/l3-remote-credentialed.md` - remote services, shared environments, and credentials
+- `/typescript-test-standards` `levels/l1-local-deterministic.md` - pure functions, temp dirs, standard local tools, Stage 5 doubles
+- `/typescript-test-standards` `levels/l2-local-infrastructure.md` - Docker, local services, browsers, and product binaries
+- `/typescript-test-standards` `levels/l3-remote-credentialed.md` - remote services, shared environments, and credentials
 
 Also check for `spx/local/typescript-tests.md` at the repository root -- product-specific overrides apply after this reference.
 
@@ -303,17 +303,17 @@ Also check for `spx/local/typescript-tests.md` at the repository root -- product
 **WRITE mode output:**
 
 ```markdown
-## Tests Written
+**Tests Written**
 
-### Node: {node_path}
+**Node: {node_path}**
 
-### Test Files Created
+**Test Files Created**
 
 | File                            | Level | Assertions Covered |
 | ------------------------------- | ----- | ------------------ |
 | `tests/foo.scenario.l1.test.ts` | `l1`  | Assertion 1, 2     |
 
-### Test Run (RED Phase)
+**Test Run (RED Phase)**
 
 Tests fail as expected. Ready for review.
 ```
@@ -321,15 +321,15 @@ Tests fail as expected. Ready for review.
 **FIX mode output:**
 
 ```markdown
-## Tests Fixed
+**Tests Fixed**
 
-### Issues Addressed
+**Issues Addressed**
 
 | Issue   | Location    | Fix Applied |
 | ------- | ----------- | ----------- |
 | {issue} | {file:line} | {fix}       |
 
-### Verification
+**Verification**
 
 Tests pass checklist. Ready for re-review.
 ```
@@ -342,7 +342,7 @@ Task is complete when:
 
 - [ ] Test files exist in `{node}/tests/` directory
 - [ ] Each assertion from spec has corresponding test(s)
-- [ ] Tests follow `/standardizing-typescript-tests` standards
+- [ ] Tests follow `/typescript-test-standards` standards
 - [ ] Tests run and fail for expected reasons
 - [ ] All reviewer feedback addressed (if FIX mode)
 

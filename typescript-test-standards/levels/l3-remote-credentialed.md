@@ -12,13 +12,13 @@ Do not hide remote complexity inside production modules. Route credentials, base
 
 - Read documented credentials or managed test-account helpers.
 - Fail loudly when selected evidence requires missing credentials.
-- Skip only when the suite explicitly marks the remote evidence optional for that command.
+- Never use `it.skip`, `it.skipIf`, or `test.skip`; when credentials or services are absent, throw with a clear diagnostic.
 - Keep remote contract assertions narrow and tied to the spec assertion.
 
 </test_shape>
 
 <file_naming>
-Use the canonical TypeScript test filename pattern from `/standardizing-typescript-tests`: `<subject>.<evidence>.<level>[.<runner>].test.ts`.
+Use the canonical TypeScript test filename pattern from `/typescript-test-standards`: `<subject>.<evidence>.<level>[.<runner>].test.ts`.
 
 Examples: `stripe-webhook.conformance.l3.test.ts`, `production-login.scenario.l3.playwright.test.ts`, `billing-retry.compliance.l3.test.ts`.
 </file_naming>

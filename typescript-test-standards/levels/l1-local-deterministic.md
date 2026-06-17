@@ -19,7 +19,7 @@ Existing code often needs to change before `l1` evidence is possible. Extract pu
 </test_shape>
 
 <file_naming>
-Use the canonical TypeScript test filename pattern from `/standardizing-typescript-tests`: `<subject>.<evidence>.<level>[.<runner>].test.ts`.
+Use the canonical TypeScript test filename pattern from `/typescript-test-standards`: `<subject>.<evidence>.<level>[.<runner>].test.ts`.
 
 Examples: `config-loader.scenario.l1.test.ts`, `route-parser.mapping.l1.test.ts`, `slug-roundtrip.property.l1.test.ts`.
 </file_naming>

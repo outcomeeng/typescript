@@ -1,15 +1,15 @@
 ---
-name: auditing-typescript-architecture
+name: audit-typescript-architecture
 description: >-
   ALWAYS invoke this skill when auditing ADRs for TypeScript.
   NEVER audit a TypeScript ADR without this skill.
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
-Invoke the `typescript:standardizing-typescript-architecture` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
+Invoke the `typescript:typescript-architecture-standards` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
 <objective>
-Review ADRs against `/standardizing-typescript-architecture` conventions, `/testing` principles, atemporal voice rules, and applicable PDR constraints. Produce a structured verdict per concern. This skill is read-only -- it produces verdicts, not code changes.
+Review ADRs against `/typescript-architecture-standards` conventions, `/test` principles, atemporal voice rules, and applicable PDR constraints. Produce a structured verdict per concern. This skill is read-only -- it produces verdicts, not code changes.
 
 **Standards are pre-loaded above.** Check for `spx/local/typescript-architecture.md` at the repository root and read it if it exists, applying it as repo-local routing to the product's governing specs and decisions. A local overlay supplements skill behavior; it does not declare product truth.
 </objective>
@@ -19,11 +19,11 @@ Review ADRs against `/standardizing-typescript-architecture` conventions, `/test
 
 When reviewing ADRs for a spec-tree work item (enabler/outcome), ensure complete architectural context is loaded:
 
-1. **Invoke `spec-tree:contextualizing`** with the node path
+1. **Invoke `spec-tree:contextualize`** with the node path
 2. **Verify all ancestor ADRs/PDRs are loaded** -- must check for consistency with decision hierarchy
 3. **Verify ADR references ancestor decisions** -- node ADRs should reference relevant ancestor ADRs/PDRs
 
-**The `spec-tree:contextualizing` skill provides:**
+**The `spec-tree:contextualize` skill provides:**
 
 - Complete ADR/PDR hierarchy (product and ancestor decisions at all levels)
 - TRD with technical requirements
@@ -43,7 +43,7 @@ When reviewing ADRs for a spec-tree work item (enabler/outcome), ensure complete
 
 <process>
 
-1. **Read `/standardizing-typescript-architecture`**, then `spx/local/typescript-architecture.md` if present, for canonical conventions
+1. **Read `/typescript-architecture-standards`**, then `spx/local/typescript-architecture.md` if present, for canonical conventions
 2. **Verify an ADR exists.** If the module makes architectural decisions (module layout, library choice, DI patterns) without an ADR, the absence is the violation — REJECT immediately. Do not treat missing ADRs as N/A.
 3. **Read the ADR** completely
 4. **Check section structure** -- only authoritative sections allowed (title + decision stated directly, Rationale, Invariants, Verification). Flag phantom sections (Purpose, Context, Trade-offs, Testing Strategy, Status, etc.)
@@ -75,32 +75,32 @@ These are real failures from past audits. Study them to avoid repeating them.
 
 <principles_to_enforce>
 
-All canonical conventions are in `/standardizing-typescript-architecture`. Read it first. The audit checks these specific concerns:
+All canonical conventions are in `/typescript-architecture-standards`. Read it first. The audit checks these specific concerns:
 
-**1. Section structure** -- Only authoritative sections from the ADR template. See `<adr_sections>` in `/standardizing-typescript-architecture` for the complete list. Flag any section not in that list.
+**1. Section structure** -- Only authoritative sections from the ADR template. See `<adr_sections>` in `/typescript-architecture-standards` for the complete list. Flag any section not in that list.
 
-**2. Testability in Verification** -- The `## Verification` section must include ALWAYS/NEVER rules under `### Audit` that enable appropriate testing. See `<testability_in_verification>` in `/standardizing-typescript-architecture` for the correct pattern. Level assignment tables and Testing Strategy sections are violations.
+**2. Testability in Verification** -- The `## Verification` section must include ALWAYS/NEVER rules under `### Audit` that enable appropriate testing. See `<testability_in_verification>` in `/typescript-architecture-standards` for the correct pattern. Level assignment tables and Testing Strategy sections are violations.
 
-**3. Atemporal voice** -- ADRs state architectural truth in ALL sections. See `<atemporal_voice>` in `/standardizing-typescript-architecture` for temporal patterns to reject and rewrite examples.
+**3. Atemporal voice** -- ADRs state architectural truth in ALL sections. See `<atemporal_voice>` in `/typescript-architecture-standards` for temporal patterns to reject and rewrite examples.
 
-**4. Mocking prohibition** -- No mocking language anywhere in the ADR. See `<di_patterns>` in `/standardizing-typescript-architecture` for what to check and correct ADR language.
+**4. Mocking prohibition** -- No mocking language anywhere in the ADR. See `<di_patterns>` in `/typescript-architecture-standards` for what to check and correct ADR language.
 
-**5. Level accuracy** -- When the `## Verification` rules reference testing levels, verify against `/testing` definitions. See `<level_context>` in `/standardizing-typescript-architecture`. Key rule: SaaS services jump `l1` to `l3` (no `l2`).
+**5. Level accuracy** -- When the `## Verification` rules reference testing levels, verify against `/test` definitions. See `<level_context>` in `/typescript-architecture-standards`. Key rule: SaaS services jump `l1` to `l3` (no `l2`).
 
-**6. Anti-patterns** -- Check for content that does not belong in an ADR. See `<anti_patterns>` in `/standardizing-typescript-architecture` for the full table.
+**6. Anti-patterns** -- Check for content that does not belong in an ADR. See `<anti_patterns>` in `/typescript-architecture-standards` for the full table.
 
 </principles_to_enforce>
 
 <output_format>
 
-Emit the verdict as JSON conforming to the canonical schema in `plugins/spec-tree/skills/auditing/scripts/verdict.py`. The skill's entire output is the JSON verdict. The caller captures the JSON and routes it through `emit_verdict.py` with the requested `--format` (defaulting to `markdown+json` for PR-comment delivery).
+Emit the verdict as JSON conforming to the canonical schema in `plugins/spec-tree/skills/audit/scripts/verdict.py`. The skill's entire output is the JSON verdict. The caller captures the JSON and routes it through `emit_verdict.py` with the requested `--format` (defaulting to `markdown+json` for PR-comment delivery).
 
 The skill's `overall` is `PASS` iff every concern row is `PASS` or `UNKNOWN` (N/A maps to `UNKNOWN`); `FAIL` if any concern is `FAIL`. Findings carry severity `REJECT` for blocking violations.
 
 ```json
 {
   "schema_version": 1,
-  "skill": "auditing-typescript-architecture",
+  "skill": "audit-typescript-architecture",
   "target": "<adr-path>",
   "overall": "PASS | FAIL | UNKNOWN",
   "rows": [
@@ -131,8 +131,8 @@ Each finding's `rule` field carries the violation pattern (e.g., `phantom-sectio
 
 **Do:**
 
-- Reference `/standardizing-typescript-architecture` section names (e.g., `<testability_in_verification>`, `<atemporal_voice>`)
-- Reference `/testing` section names for level rules (e.g., "Stage 2 Five Factors")
+- Reference `/typescript-architecture-standards` section names (e.g., `<testability_in_verification>`, `<atemporal_voice>`)
+- Reference `/test` section names for level rules (e.g., "Stage 2 Five Factors")
 - Show correct architecture with code or markdown examples
 - Be direct about violations
 - Reject temporal language in ANY section -- the decision statement, Rationale, Verification
@@ -147,7 +147,7 @@ Read `${CLAUDE_SKILL_DIR}/references/example-audit.md` for a complete REJECTED r
 <success_criteria>
 Review is complete when:
 
-- [ ] Read `/standardizing-typescript-architecture` and `spx/local/typescript-architecture.md` (if present) before starting review
+- [ ] Read `/typescript-architecture-standards` and `spx/local/typescript-architecture.md` (if present) before starting review
 - [ ] Checked section structure against authoritative ADR template
 - [ ] Checked ALL sections for temporal language -- the decision statement, Rationale, Verification
 - [ ] Verified `## Verification` includes testability constraints (ALWAYS/NEVER for DI, no mocking)

@@ -45,7 +45,7 @@ interface BuildDependencies {
 
 **Where:** "## Testing Strategy" section with level assignment table
 **Concern:** Section structure, Anti-patterns
-**Why this fails:** The authoritative ADR template has no Testing Strategy section. Level assignments are a downstream concern for `/testing`. Testability constraints belong under `## Verification`'s `### Audit` subsection as ALWAYS/NEVER rules.
+**Why this fails:** The authoritative ADR template has no Testing Strategy section. Level assignments are a downstream concern for `/test`. Testability constraints belong under `## Verification`'s `### Audit` subsection as ALWAYS/NEVER rules.
 
 **Correct approach:**
 
@@ -96,10 +96,10 @@ build logic, so command-building is verifiable at `l1`.
 
 ## References
 
-- /standardizing-typescript-architecture: `<adr_sections>` (no Testing Strategy section)
-- /standardizing-typescript-architecture: `<testability_in_verification>` (ALWAYS/NEVER pattern)
-- /standardizing-typescript-architecture: `<atemporal_voice>` (temporal patterns)
-- /standardizing-typescript-architecture: `<di_patterns>` (mocking prohibition)
+- /typescript-architecture-standards: `<adr_sections>` (no Testing Strategy section)
+- /typescript-architecture-standards: `<testability_in_verification>` (ALWAYS/NEVER pattern)
+- /typescript-architecture-standards: `<atemporal_voice>` (temporal patterns)
+- /typescript-architecture-standards: `<di_patterns>` (mocking prohibition)
 
 ---
 

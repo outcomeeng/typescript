@@ -1,18 +1,18 @@
 ---
-name: auditing-typescript-tests
+name: audit-typescript-tests
 description: >-
   ALWAYS invoke this skill when auditing TypeScript test evidence, reviewing TypeScript tests for spec-tree evidence quality, or evaluating TypeScript test infrastructure.
   NEVER audit TypeScript test evidence without this skill.
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
-Invoke the `typescript:standardizing-typescript` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
+Invoke the `typescript:typescript-standards` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
-Invoke the `typescript:standardizing-typescript-tests` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
+Invoke the `typescript:typescript-test-standards` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
-Invoke the `spec-tree:testing` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
+Invoke the `spec-tree:test` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
-Invoke the `spec-tree:auditing-tests` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
+Invoke the `spec-tree:audit-tests` skill before proceeding. If that skill is unavailable, report the missing skill and continue with the closest available workflow.
 
 <objective>
 
@@ -33,7 +33,7 @@ A gate failure skips the next gate.
 Read `spx/local/typescript.md` if it exists; otherwise apply the loaded skills only.
 Read `spx/local/typescript-tests.md` if it exists; otherwise apply the loaded skills only.
 
-3. Invoke `/contextualizing` on the spec node under audit — `<SPEC_TREE_CONTEXT>` marker must be present before Gate 1
+3. Invoke `/contextualize` on the spec node under audit — `<SPEC_TREE_CONTEXT>` marker must be present before Gate 1
 
 Optional preliminary tool: `spx validation literal` (ships with the `spx` CLI). If unavailable, proceed without cross-file literal findings.
 
@@ -115,11 +115,11 @@ If a generator's only behavior is `fc.constant(...)` for a source-owned singleto
 
 <step name="mocks">
 
-**Step 4 — Scan for mocks and judge against `/testing` exceptions**
+**Step 4 — Scan for mocks and judge against `/test` exceptions**
 
 For each `vi.mock`, `vi.spyOn`, `vi.fn`, or similar mock pattern in this test file:
 
-1. Identify which `/testing` exception (1–7) applies:
+1. Identify which `/test` exception (1–7) applies:
 
    | Exception                | Legitimate TypeScript pattern              |
    | ------------------------ | ------------------------------------------ |
@@ -220,7 +220,7 @@ Applied at step 7 of Gate 1.
 
 <supplement property="coupling">
 
-Restate the foundation's 5-category taxonomy — do not delegate to `/auditing-tests`:
+Restate the foundation's 5-category taxonomy — do not delegate to `/audit-tests`:
 
 | Category   | Definition                                                    | Verdict                           |
 | ---------- | ------------------------------------------------------------- | --------------------------------- |
@@ -336,7 +336,7 @@ If the product has no coverage tooling: record as a coverage note, do not REJECT
 
 <verdict_format>
 
-Follow `<verdict_format>` in `/auditing-tests`. Preliminary check IDs: L3, L4 (from `spx validation literal` — see `<preliminary_check>`). Gate 2 extraction target: `testing/harnesses/{name}.ts`.
+Follow `<verdict_format>` in `/audit-tests`. Preliminary check IDs: L3, L4 (from `spx validation literal` — see `<preliminary_check>`). Gate 2 extraction target: `testing/harnesses/{name}.ts`.
 
 </verdict_format>
 
@@ -344,9 +344,9 @@ Follow `<verdict_format>` in `/auditing-tests`. Preliminary check IDs: L3, L4 (f
 
 **Failure 1 — Contradiction resolution followed operational guide over canonical standard**
 
-The standard in `/standardizing-typescript-tests` rejects `.e2e.test.ts`, `.unit.test.ts`, `.integration.test.ts`. A prior version of this skill said filename conventions were "deferred as standards issues." Both rules were visible. Claude followed the audit skill because it was the operational guide for *this task*, resolving the contradiction by authority-of-specificity. Five files with legacy suffixes shipped approved.
+The standard in `/typescript-test-standards` rejects `.e2e.test.ts`, `.unit.test.ts`, `.integration.test.ts`. A prior version of this skill said filename conventions were "deferred as standards issues." Both rules were visible. Claude followed the audit skill because it was the operational guide for *this task*, resolving the contradiction by authority-of-specificity. Five files with legacy suffixes shipped approved.
 
-How to avoid: `/standardizing-typescript-tests` defines the filename convention. Gate 1 step 1 challenges the assertion type; the deferral carveout no longer exists.
+How to avoid: `/typescript-test-standards` defines the filename convention. Gate 1 step 1 challenges the assertion type; the deferral carveout no longer exists.
 
 **Failure 2 — Harness coupling camouflage: the mock lives in the harness**
 
