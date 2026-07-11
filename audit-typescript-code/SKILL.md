@@ -1,8 +1,8 @@
 ---
-name: audit-typescript
+name: audit-typescript-code
 description: >-
-  TypeScript implementation-code audit methodology — design flaws and ADR compliance — composed by a generic auditor agent for the TypeScript files in scope.
-  Reached only through a dispatched auditor agent, never the main conversation.
+  TypeScript implementation-code audit methodology — design flaws and ADR compliance — composed by implementation-auditor for the TypeScript code files in scope.
+  Reached only through the dispatched implementation-auditor agent, never the main conversation.
 allowed-tools: Read, Bash, Glob, Grep, Skill
 ---
 
@@ -10,15 +10,26 @@ Invoke the `typescript:typescript-standards` skill before proceeding. If that sk
 
 <dispatch_gate>
 
-This audit runs inside a dispatched auditor's verifier context — a generic auditor agent (`auditor` or `audit-orchestrator`) composing this skill for the TypeScript files in scope — isolated from the author context that produced the work under audit. When this skill loads in the author/main conversation rather than inside a dispatched auditor agent, STOP — the audit must run in that verifier context. An already-dispatched agent that preloaded this skill is in the right context and proceeds.
+This audit runs inside the dispatched `implementation-auditor` verifier context composing this skill for the TypeScript code files in scope — isolated from the author context that produced the work under audit. When this skill loads in the author/main conversation rather than inside `implementation-auditor`, STOP — the audit must run in that verifier context. An already-dispatched implementation-auditor that preloaded this skill is in the right context and proceeds.
 
 </dispatch_gate>
 
 <objective>
 
-A verdict on TypeScript implementation code — APPROVED, or REJECTED with each finding naming the design flaw, the violated rule, and the evidence.
+A verdict on TypeScript implementation code — `APPROVED`, or `REJECTED` with each finding naming the design flaw, the violated rule, and the evidence.
 
 </objective>
+
+<constraints>
+
+- NEVER modify files, generate fixes, write replacement code, commit changes, or change project state — this audit produces a verdict only.
+- NEVER run deterministic validation, lint, type-check, test, or eval commands — the caller passes those before dispatch and CI re-runs them over the repository.
+- NEVER evaluate test evidence quality — the composing implementation auditor invokes `/audit-typescript-tests` as a separate concern.
+- ALWAYS keep findings to artifact, violated rule, evidence, and why the cited code violates the rule.
+- NEVER include corrective code samples, implementation patches, prescribed refactors, or required-change summaries in the verdict.
+- `APPROVED` means every concern row passes or is explicitly not applicable. `REJECTED` means at least one concern row fails. `APPROVED` output contains no notes, warnings, or suggestions sections.
+
+</constraints>
 
 <repo_local_overlay>
 Standards are pre-loaded above. Check for `spx/local/typescript.md` at the repository root. Read it if it exists and apply it as repo-local routing to the product's governing specs and decisions. A local overlay supplements skill behavior; it does not declare product truth.
@@ -40,7 +51,7 @@ Automated tools catch syntax errors, type mismatches, and lint violations. Claud
 
 **Binary verdict, no caveats.**
 
-APPROVED means every concern passes. REJECTED means at least one fails. APPROVED output contains no notes, warnings, or suggestions sections.
+The verdict is the only output. Findings prove violations; they do not prescribe fixes.
 
 </essential_principles>
 
@@ -114,14 +125,14 @@ See `${CLAUDE_SKILL_DIR}/references/false-positive-handling.md` for application 
 
 **Phase 2: ADR/PDR Compliance**
 
-Find applicable ADRs/PDRs in the spec hierarchy (`*.adr.md`, `*.pdr.md`). Verify each constraint is followed. Undocumented deviations = REJECTED. If the product has no spec hierarchy, this concern is N/A.
+Find applicable ADRs/PDRs in the spec hierarchy (`*.adr.md`, `*.pdr.md`). Verify each constraint is followed. Undocumented deviations make this concern `FAIL`. If the product has no spec hierarchy, this concern is `NOT_APPLICABLE`.
 
-| Decision Record Constraint           | Violation Example                   | Verdict  |
-| ------------------------------------ | ----------------------------------- | -------- |
-| "Use dependency injection" (ADR)     | Direct imports of external services | REJECTED |
-| "`l1` tests for logic" (ADR)         | `l1` tests hitting network          | REJECTED |
-| "No class components" (ADR)          | React class component added         | REJECTED |
-| "Lifecycle is Draft→Published" (PDR) | Added hidden `Archived` state       | REJECTED |
+| Decision Record Constraint           | Violation Example                   | Verdict |
+| ------------------------------------ | ----------------------------------- | ------- |
+| "Use dependency injection" (ADR)     | Direct imports of external services | FAIL    |
+| "`l1` tests for logic" (ADR)         | `l1` tests hitting network          | FAIL    |
+| "No class components" (ADR)          | React class component added         | FAIL    |
+| "Lifecycle is Draft→Published" (PDR) | Added hidden `Archived` state       | FAIL    |
 
 </audit_workflow>
 
@@ -143,55 +154,54 @@ These are real failures from past audits. Study them to avoid repeating them.
 
 <verdict_format>
 
-Emit the verdict as JSON conforming to the canonical audit-verdict schema consumed by the composing audit workflow. The skill's entire output is the JSON verdict. The composing audit workflow records and renders the verdict through the audit journal path.
+Emit a structured verdict consumed by the composing verification workflow. The skill's entire output is the verdict payload. The composing workflow records findings, terminal state, and rendered projection through `spx verification run`.
 
-The skill's `overall` is `PASS` iff every concern row is `PASS` or `UNKNOWN` (N/A maps to `UNKNOWN`); `FAIL` if any concern is `FAIL`. Findings carry severity `REJECT` for blocking violations.
+The skill's `overall` is `APPROVED` iff every concern row is `PASS` or `NOT_APPLICABLE`; it is `REJECTED` if any concern is `FAIL`. An unavailable required inspection is `FAIL`, never `NOT_APPLICABLE`. Findings use severity `blocking` or `debt`.
 
 ```json
 {
   "schema_version": 1,
-  "skill": "audit-typescript",
+  "skill": "audit-typescript-code",
   "target": "<scope-target>",
-  "overall": "PASS | FAIL | UNKNOWN",
+  "overall": "APPROVED | REJECTED",
   "rows": [
-    { "name": "function-comprehension", "status": "PASS | FAIL | UNKNOWN", "findings": [] },
-    { "name": "design-coherence", "status": "PASS | FAIL | UNKNOWN", "findings": [] },
-    { "name": "import-structure", "status": "PASS | FAIL | UNKNOWN", "findings": [] },
-    { "name": "adr-pdr-compliance", "status": "PASS | FAIL | UNKNOWN", "findings": [] }
+    { "name": "function-comprehension", "status": "PASS | FAIL | NOT_APPLICABLE", "explanation": "<required when NOT_APPLICABLE>", "findings": [] },
+    { "name": "design-coherence", "status": "PASS | FAIL | NOT_APPLICABLE", "explanation": "<required when NOT_APPLICABLE>", "findings": [] },
+    { "name": "import-structure", "status": "PASS | FAIL | NOT_APPLICABLE", "explanation": "<required when NOT_APPLICABLE>", "findings": [] },
+    { "name": "adr-pdr-compliance", "status": "PASS | FAIL | NOT_APPLICABLE", "explanation": "<required when NOT_APPLICABLE>", "findings": [] }
   ],
   "metadata": { "branch": "<branch>" }
 }
 ```
 
-Each finding carries `file`, `line`, `rule` (the concern name from the verdict table or a specific violation name), `severity: "REJECT"`, and `message` (the one-line "why this fails"). Include correct-approach code samples and required changes directly in the finding's `message` field — the JSON verdict is the complete output of this skill.
+Each finding carries `file`, `line`, `rule` (the concern name from the verdict table or a specific violation name), `severity: "blocking | debt"`, `message`, `observed`, and `expected`. The message names the violated rule and consequence only; it contains no corrective code sample, implementation patch, prescribed refactor, or required-change summary.
 
 </verdict_format>
 
 <what_to_avoid>
 
 - Do NOT run or re-check the project's linters, type-checker, or tests — the caller passed them on the changeset before dispatch, and CI re-runs them over the whole repository
-- Do NOT evaluate test evidence quality (delegate to `/audit-typescript-tests`)
+- Do NOT evaluate test evidence quality; the composing implementation auditor invokes `/audit-typescript-tests` separately
 - Do NOT commit or modify code (this skill is read-only)
+- Do NOT generate fixes, replacement code, refactors, or required-change summaries
 - Do NOT approve with caveats (binary verdict only)
 - Do NOT reject for code style when comprehension found no design flaws
 
 </what_to_avoid>
 
 <example_review>
-Read `${CLAUDE_SKILL_DIR}/references/example-audit.md` for complete APPROVED and REJECTED examples showing all concern types.
+Read `${CLAUDE_SKILL_DIR}/references/example-audit.md` for complete PASS and FAIL examples.
 
 </example_review>
 
 <success_criteria>
 
-Review is complete when:
+A sound verdict has these properties:
 
-- [ ] Every function comprehended via predict/verify protocol (Phase 1)
-- [ ] Design evaluated: IO/logic, DI, SRP, error quality (Phase 1)
-- [ ] Import structure checked (Phase 1)
-- [ ] ADR/PDR compliance verified (Phase 2)
-- [ ] Structured verdict table with per-concern status
-- [ ] For REJECT: findings with concern, explanation, and correct approach
-- [ ] Decision clearly stated (APPROVED/REJECTED)
+- [ ] The verdict states exactly one overall determination: `APPROVED` or `REJECTED`
+- [ ] Every applicable TypeScript concern in the verdict table was judged, with no skipped concern hidden by an approval
+- [ ] Each `FAIL` finding names the file, line, violated concern or rule, and concrete evidence
+- [ ] Each `NOT_APPLICABLE` row explains why the concern does not apply; a missing or blocked required inspection produces `FAIL`
+- [ ] The same repository state and audit scope can reproduce the verdict from the listed evidence
 
 </success_criteria>
