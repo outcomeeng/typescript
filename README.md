@@ -23,8 +23,8 @@ Install these first:
 | Skill | Description |
 | ----- | ----------- |
 | `architect-typescript` | writing ADRs for TypeScript |
-| `audit-typescript-architecture` | TypeScript-specific architecture audit — dependency injection, no-mocking, level accuracy — composed by generic artifact-type auditors for the TypeScript concerns in scope |
-| `audit-typescript-code` | TypeScript implementation-code audit methodology — design flaws and ADR compliance — composed by implementation-auditor for the TypeScript code files in scope |
+| `audit-typescript-architecture` | TypeScript-specific architecture audit — judges the TypeScript architecture target in scope for dependency injection, mocking prohibition, execution-level accuracy, TypeScript anti-patterns, and ancestor consistency |
+| `audit-typescript-code` | TypeScript implementation-code audit methodology — judges the TypeScript code files in scope for design flaws and architecture-decision compliance |
 | `audit-typescript-tests` | TypeScript test-evidence audit methodology — judges the TypeScript tests in scope against the spec-tree and TypeScript-specific evidence properties |
 | `code-typescript` | writing or fixing implementation code for TypeScript |
 | `test-typescript` | writing or fixing tests for TypeScript |
