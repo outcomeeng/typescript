@@ -29,7 +29,7 @@ Install these first:
 | `code-typescript` | writing or fixing implementation code for TypeScript |
 | `test-typescript` | writing or fixing tests for TypeScript |
 | `typescript-architecture-standards` | TypeScript ADR conventions enforced across architect and auditor skills |
-| `typescript-plugin` | ALWAYS invoke this skill to operate the typescript plugin's own lifecycle in a checkout — report its version, manage whatever checkout footprint this plugin owns on the running agent, and check that footprint |
+| `typescript-plugin` | ALWAYS invoke this skill to operate the typescript plugin's own lifecycle — report its version and check or reconcile its agent-delivery footprint |
 | `typescript-standards` | TypeScript code standards enforced across all skills |
 | `typescript-test-standards` | TypeScript testing standards enforced across all skills |
 
