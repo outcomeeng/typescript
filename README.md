@@ -31,7 +31,7 @@ Install these first:
 | `typescript-architecture-standards` | TypeScript ADR conventions enforced across architect and auditor skills |
 | `typescript-plugin` | ALWAYS invoke this skill to operate the typescript plugin's own lifecycle — report its version and check or reconcile its agent-delivery footprint |
 | `typescript-standards` | TypeScript code standards enforced across all skills |
-| `typescript-test-standards` | TypeScript testing standards enforced across all skills |
+| `typescript-test-standards` | TypeScript test standards enforced across all skills |
 
 ## License
 
