@@ -18,7 +18,7 @@ Install these first:
 - `npx skills add outcomeeng/spec-tree`
 
   - outcomeeng/spec-tree (for /testing and /auditing-tests)
-## Skills (10)
+## Skills (11)
 
 | Skill | Description |
 | ----- | ----------- |
@@ -27,6 +27,7 @@ Install these first:
 | `audit-typescript-code` | TypeScript implementation-code audit methodology — judges the TypeScript code files in scope for design flaws and architecture-decision compliance |
 | `audit-typescript-tests` | TypeScript test-evidence audit methodology — judges the TypeScript tests in scope against the spec-tree and TypeScript-specific evidence properties |
 | `code-typescript` | writing or fixing implementation code for TypeScript |
+| `simplify-typescript` | simplifying TypeScript implementation while preserving behavior |
 | `test-typescript` | writing or fixing tests for TypeScript |
 | `typescript-architecture-standards` | TypeScript ADR conventions enforced across architect and auditor skills |
 | `typescript-plugin` | ALWAYS invoke this skill to operate the typescript plugin's own lifecycle — report its version and check or reconcile its agent-delivery footprint |
