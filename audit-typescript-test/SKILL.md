@@ -1,5 +1,5 @@
 ---
-name: audit-typescript-tests
+name: audit-typescript-test
 description: >-
   TypeScript test-evidence audit methodology — judges the TypeScript tests in
   scope against the spec-tree and TypeScript-specific evidence properties.
@@ -22,7 +22,7 @@ This audit is read-only. Produce a verdict over test evidence; never edit tests,
 
 <prerequisites>
 
-Use skill `typescript:typescript-standards`.
+Use skill `typescript:typescript-code-standards`.
 
 Use skill `typescript:typescript-test-standards`.
 

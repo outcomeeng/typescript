@@ -1,5 +1,5 @@
 ---
-name: test-typescript
+name: author-typescript-test
 description: >-
   ALWAYS invoke this skill when writing or fixing tests for TypeScript.
   NEVER write or fix TypeScript tests without this skill.
@@ -8,7 +8,7 @@ arguments: node_path
 allowed-tools: Read, Glob, Grep, Write, Edit, Skill, Bash(npx tsc:*), Bash(npx eslint:*), Bash(npx vitest:*)
 ---
 
-Use skill `typescript:typescript-standards`.
+Use skill `typescript:typescript-code-standards`.
 
 Use skill `typescript:typescript-test-standards`.
 
@@ -30,7 +30,7 @@ TypeScript test files that supply evidence for a node specification's assertions
    - Action: Follow full workflow below
 
 2. **FIX mode** - Tests exist but were rejected by reviewer
-   - Check: Recent `/audit-typescript-tests` output shows `REJECTED` with specific failing rows or findings
+   - Check: Recent `/audit-typescript-test` output shows `REJECTED` with specific failing rows or findings
    - Action: Read the rejection, fix the specific issues, re-run tests
 
 **Always check which mode before proceeding.**
@@ -193,7 +193,7 @@ Everything else is source-owned data (import it), source-owned construction (exp
 
 **Step 1: Read Rejection Feedback**
 
-Find the most recent `/audit-typescript-tests` output. Look for:
+Find the most recent `/audit-typescript-test` output. Look for:
 
 - Specific file:line locations
 - Issue categories (evidentiary gap, missing property tests, etc.)

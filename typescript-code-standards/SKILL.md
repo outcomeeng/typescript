@@ -1,5 +1,5 @@
 ---
-name: typescript-standards
+name: typescript-code-standards
 user-invocable: false
 description: >-
   TypeScript code standards enforced across all skills. Loaded by other skills, not invoked directly.
